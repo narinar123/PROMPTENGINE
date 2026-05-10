@@ -5,19 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GUIDESOFT | Advanced Dynamic AI Ecosystem</title>
     <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class', theme: { extend: { colors: { background: "#050505", foreground: "#ffffff", primary: "#6366f1" }, animation: { 'blob': 'blob 7s infinite' }, keyframes: { blob: { '0%': { transform: 'translate(0px, 0px) scale(1)' }, '33%': { transform: 'translate(30px, -50px) scale(1.1)' }, '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }, '100%': { transform: 'translate(0px, 0px) scale(1)' } } } } }
+            darkMode: 'class', 
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: { background: "#050506", foreground: "#ffffff", primary: "#6366f1" }, 
+                    animation: { 'blob': 'blob 7s infinite' }, 
+                    keyframes: { blob: { '0%': { transform: 'translate(0px, 0px) scale(1)' }, '33%': { transform: 'translate(30px, -50px) scale(1.1)' }, '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }, '100%': { transform: 'translate(0px, 0px) scale(1)' } } } 
+                } 
+            } 
         }
     </script>
     <style>
-        body { background-color: #050505; color: #fff; }
-        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-        .text-gradient { background: linear-gradient(to right, #a5b4fc, #6366f1, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body { background-color: #050506; color: #fff; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(255,255,255,0.02); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .text-gradient { background: linear-gradient(to right, #818cf8, #c084fc, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .perspective-1000 { perspective: 1000px; }
+        ::selection { background: #6366f1; color: white; }
     </style>
     <!-- Immediate Global Node Polyfill (Prevents CDN Vendor Crashes) -->
     <script>window.process = { env: { NODE_ENV: 'production' } };</script>
@@ -25,10 +36,12 @@
     <script type="importmap">
     {
       "imports": {
-        "react": "https://esm.sh/react@18",
-        "react-dom/client": "https://esm.sh/react-dom@18/client",
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
         "framer-motion": "https://esm.sh/framer-motion@10.16.4",
-        "lucide-react": "https://esm.sh/lucide-react@0.294.0"
+        "lucide-react": "https://esm.sh/lucide-react@0.294.0",
+        "gsap": "https://esm.sh/gsap@3.12.5",
+        "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger"
       }
     }
     </script>

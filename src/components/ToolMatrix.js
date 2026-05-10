@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, FileText, Edit, Repeat, CheckCircle, 
   BookOpen, Mail, MessageSquare, Briefcase, Copy,
-  CheckSquare, Globe, Type, Sparkles, Play, Loader2, Shield 
+  CheckSquare, Globe, Type, Sparkles, Play, Loader2, Shield, User 
 } from "lucide-react";
 import { useAuth } from "/src/components/AuthManager.js";
 

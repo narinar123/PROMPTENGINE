@@ -4,16 +4,23 @@
  */
 
 // Unified Module Ecosystem Injection
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect, useLayoutEffect, useRef } from "react";
 import { createRoot } from 'react-dom/client';
 import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { 
   User, Lock, Settings, Key, 
   Sparkles, ArrowRight, Shield, Zap, Globe, 
   Terminal, Play, Loader2, CheckCircle2, AlertCircle,
   FileText, Edit, Repeat, CheckCircle, BookOpen, Mail, 
   MessageSquare, Briefcase, Copy, CheckSquare, Type,
-  Database, Code, Layers, Cpu} from "lucide-react";
+  Database, Code, Layers, Cpu, Star, Check} from "lucide-react";
+
+// Core Engine Extension Registration
+if (typeof window !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
 
 
@@ -839,6 +846,69 @@ const FooterV3 = () => {
   );
 };
 
+const HandbooksSection = () => {
+  const books = [
+    { name: "Design System in Figma", count: "10 sections", img: "https://designcode.io/images/illustrations/team.svg", color: "#00C6FF" },
+    { name: "React Hooks Handbook", count: "8 sections", img: "https://designcode.io/images/illustrations/react.svg", color: "#7928CA" },
+    { name: "SwiftUI Handbook", count: "12 sections", img: "https://designcode.io/images/illustrations/swiftui.svg", color: "#FF4B2B" },
+    { name: "Spline 3D Handbook", count: "7 sections", img: "https://designcode.io/images/illustrations/spline.svg", color: "#F9CB28" }
+  ];
+
+  return React.createElement("section", { className: "py-24 px-6 max-w-7xl mx-auto" },
+    React.createElement("div", { className: "mb-12 flex flex-col md:flex-row justify-between items-end" },
+      React.createElement("div", null,
+        React.createElement("span", { className: "text-[#FF4ECD] font-bold tracking-widest text-xs mb-2 block" }, "PREMIUM HANDBOOKS"),
+        React.createElement("h2", { className: "text-3xl md:text-4xl font-black text-white" }, "Master coding techniques")
+      ),
+      React.createElement("button", { className: "text-white/60 hover:text-white text-sm font-bold flex items-center gap-2 transition-colors mt-4 md:mt-0" }, "View All Handbooks", React.createElement(ArrowRight, { className: "w-4 h-4" }))
+    ),
+    React.createElement("div", { className: "grid md:grid-cols-2 lg:grid-cols-4 gap-6" },
+      books.map((b, i) => 
+        React.createElement(motion.div, {
+          key: i,
+          whileHover: { y: -5, scale: 1.02 },
+          className: "group glass rounded-[30px] p-6 flex flex-col items-center text-center cursor-pointer hover:border-white/20 transition-all"
+        },
+          React.createElement("div", { className: "w-24 h-24 mb-6 relative" },
+             React.createElement("div", { className: "absolute inset-0 blur-2xl opacity-40 group-hover:opacity-70 transition-opacity rounded-full", style: { backgroundColor: b.color } }),
+             React.createElement("img", { src: b.img, className: "w-full h-full object-contain relative z-10 drop-shadow-xl", alt: "" })
+          ),
+          React.createElement("h3", { className: "text-lg font-bold text-white mb-1" }, b.name),
+          React.createElement("p", { className: "text-xs text-white/40 font-bold tracking-widest uppercase" }, b.count)
+        )
+      )
+    )
+  );
+};
+
+const CertificateSection = () => {
+  return React.createElement("section", { className: "py-20 px-6" },
+    React.createElement("div", { className: "max-w-5xl mx-auto glass bg-gradient-to-br from-white/10 to-transparent rounded-[50px] border border-white/20 p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden" },
+      React.createElement("div", { className: "absolute top-0 right-0 w-96 h-96 bg-[#00C6FF]/20 blur-[100px] rounded-full -mr-40 -mt-40" }),
+      React.createElement("div", { className: "flex-1 text-center md:text-left relative z-10" },
+        React.createElement("div", { className: "flex justify-center md:justify-start gap-2 mb-6" },
+          [...Array(5)].map((_, i) => React.createElement(Star, { key: i, className: "w-5 h-5 fill-[#F9CB28] text-[#F9CB28]" }))
+        ),
+        React.createElement("h2", { className: "text-3xl md:text-5xl font-black text-white mb-6 leading-tight" }, "Earn Certificates to boost your career"),
+        React.createElement("p", { className: "text-white/60 text-lg mb-8" }, "Upon completion of each track, you’ll earn a beautiful personalized certificate. Add them to your LinkedIn or resume to stand out."),
+        React.createElement("button", { className: "px-8 py-3 rounded-2xl bg-[#007CF0] hover:bg-[#007CF0]/80 text-white font-bold text-sm shadow-lg shadow-[#007CF0]/30 transition-all" }, "Discover Certificates")
+      ),
+      React.createElement("div", { className: "w-full max-w-xs relative" },
+        React.createElement(motion.div, {
+          animate: { rotate: [0, 360] },
+          transition: { duration: 40, repeat: Infinity, ease: "linear" },
+          className: "absolute inset-0 bg-gradient-to-tr from-[#FF4ECD] to-[#00C6FF] opacity-30 blur-[50px] rounded-full"
+        }),
+        React.createElement("img", { 
+          src: "https://designcode.io/images/icons/courses.svg", 
+          className: "w-full h-auto relative z-10 drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] filter brightness-110 saturate-150",
+          alt: "Certificate Badge" 
+        })
+      )
+    )
+  );
+};
+
 const DesignCodeMasterView = ({ onAction }) => {
   return React.createElement("main", { className: "relative min-h-screen w-full text-white overflow-x-hidden flex flex-col font-sans selection:bg-[#00C6FF] selection:text-black" },
     React.createElement(MasterBackground),
@@ -846,6 +916,8 @@ const DesignCodeMasterView = ({ onAction }) => {
     React.createElement(DetailedHero),
     React.createElement(ScrollingFeatures),
     React.createElement(CoursesGrid),
+    React.createElement(HandbooksSection),
+    React.createElement(CertificateSection),
     React.createElement(PricingV3),
     React.createElement(FooterV3)
   );
