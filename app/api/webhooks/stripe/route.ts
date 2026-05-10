@@ -4,6 +4,9 @@ import { handleWebhookEvent } from '@/lib/stripe';
 import { sendPaymentConfirmationEmail } from '@/lib/email';
 import { SUBSCRIPTION_TIERS } from '@/lib/stripe';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.text();
