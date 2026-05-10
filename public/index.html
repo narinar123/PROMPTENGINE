@@ -31,7 +31,23 @@
         ::selection { background: #6366f1; color: white; }
     </style>
     <!-- Immediate Global Node Polyfill (Prevents CDN Vendor Crashes) -->
-    <script>window.process = { env: { NODE_ENV: 'production' } };</script>
+    <script>
+      window.process = { env: { NODE_ENV: 'production' } };
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
+        var el = document.createElement('div');
+        el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:red;color:white;z-index:999999;padding:20px;font-family:monospace;white-space:pre-wrap;';
+        el.textContent = 'GLOBAL ERROR: ' + msg + '
+' + url + ':' + lineNo + ':' + columnNo + '
+' + (error ? error.stack : '');
+        document.body.appendChild(el);
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+        var el = document.createElement('div');
+        el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:orange;color:white;z-index:999999;padding:20px;font-family:monospace;white-space:pre-wrap;';
+        el.textContent = 'UNHANDLED PROMISE REJECTION: ' + (event.reason && event.reason.stack ? event.reason.stack : event.reason);
+        document.body.appendChild(el);
+      });
+    </script>
     <!-- Standard CDN Dynamic Import Map -->
     <script type="importmap">
     {
