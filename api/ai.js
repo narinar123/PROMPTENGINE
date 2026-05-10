@@ -48,16 +48,19 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // Wait for POST body data
-    let bodyStr = '';
-    await new Promise((resolve) => {
-        req.on('data', chunk => bodyStr += chunk);
-        req.on('end', resolve);
-    });
+    let parsed = req.body;
+
+    if (!parsed) {
+        // Fallback for non-buffered stream execution (some runtimes)
+        let bodyStr = '';
+        await new Promise((resolve) => {
+            req.on('data', chunk => bodyStr += chunk);
+            req.on('end', resolve);
+        });
+        try { parsed = JSON.parse(bodyStr || '{}'); } catch(e) { parsed = {}; }
+    }
 
     try {
-        const parsed = JSON.parse(bodyStr || '{}');
-        // Extract explicit prompt or fallback text if it was sent nested
         const promptText = parsed.prompt || parsed.text || "Analyze current prompt orchestrator state.";
         
         const result = await callGemini(promptText);

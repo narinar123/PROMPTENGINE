@@ -1,131 +1,206 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { 
   Play, Sparkles, Shield, Zap, Globe, ArrowRight,
   Cpu, Database, Code, Layers, Terminal, Lock, Star, Check, Mail
 } from "lucide-react";
 
-// --- EXACT ASSETS FROM DESIGNCODE ---
+// --- UPDATED MODERN PREMIUM ASSETS & ASSET SOURCES ---
 const ASSETS = {
-  logo: "https://designcode.io/images/logos/logo.svg",
-  heroBg: "https://designcode.io/images/mockups/mockup3-bg.svg",
+  logo: "https://www.gsgroups.net/gslogo.png",
+  heroBg: "https://designcode.io/images/mockups/mockup3-bg.svg", // Will utilize parallax
   heroCard1: "https://designcode.io/images/mockups/mockup-card2.svg",
   heroContent: "https://designcode.io/images/mockups/mockup-content.svg",
-  proIcon: "https://designcode.io/images/icons/pricing-large.svg",
-  course1: "https://images.ctfassets.net/ooa29xqb8tix/7bIHb2z3qClO9GfyPwj6nP/4cb3a08cdc0d34645540b1295f96dc67/Logo_React.png",
-  course2: "https://images.ctfassets.net/ooa29xqb8tix/4bWEQMRsA6PzjiHljsxryp/55d78d84da072e9c22caddbccd67396b/swift-logo.png",
-  course3: "https://images.ctfassets.net/ooa29xqb8tix/6wKL78pR08vwXE1lqdnmqQ/3fae44b2af1858454fa6c34fafe68cf1/framer-logo.png",
-  course4: "https://images.ctfassets.net/ooa29xqb8tix/1bYdUtniEAUH3jdqQd3Qc1/7cf21d20882bfe59f01d7bc74e81010d/react-logo.png"
+  proIcon: "https://designcode.io/images/icons/pricing-large.svg"
 };
 
-// Massive Visual Background with moving blobs and waves
 const MasterBackground = () => {
-  return React.createElement("div", { className: "fixed inset-0 -z-10 bg-[#1F1F47] overflow-hidden" },
+  const bgRef = useRef(null);
+  const circle1 = useRef(null);
+  const circle2 = useRef(null);
+
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      // Parallax on the circles linked to page scroll
+      gsap.to(circle1.current, {
+        y: -200,
+        x: 100,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.5
+        }
+      });
+
+      gsap.to(circle2.current, {
+        y: 300,
+        x: -150,
+        scale: 1.2,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          end: "bottom top",
+          scrub: 2
+        }
+      });
+    }, bgRef);
+    return () => ctx.revert();
+  }, []);
+
+  return React.createElement("div", { ref: bgRef, className: "fixed inset-0 -z-10 bg-[#05050A] overflow-hidden" },
     React.createElement("img", { 
       src: ASSETS.heroBg, 
-      className: "absolute top-0 left-0 w-full h-full object-cover opacity-40 mix-blend-overlay",
+      className: "absolute top-0 left-0 w-full h-full object-cover opacity-20 mix-blend-overlay",
       alt: "" 
     }),
-    React.createElement(motion.div, {
-      animate: { scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, -20, 0] },
-      transition: { duration: 20, repeat: Infinity, ease: "linear" },
-      className: "absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full bg-gradient-to-br from-[#FF4ECD] to-[#F9CB28] opacity-30 blur-[120px]"
+    React.createElement("div", {
+      ref: circle1,
+      className: "absolute top-[-15%] left-[-5%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-[#6366f1]/20 to-[#a855f7]/20 opacity-60 blur-[120px]"
     }),
-    React.createElement(motion.div, {
-      animate: { scale: [1, 1.15, 1], x: [0, -40, 0], y: [0, 30, 0] },
-      transition: { duration: 25, repeat: Infinity, ease: "linear" },
-      className: "absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] rounded-full bg-gradient-to-br from-[#007CF0] to-[#00DFD8] opacity-30 blur-[120px]"
+    React.createElement("div", {
+      ref: circle2,
+      className: "absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-br from-[#ec4899]/10 to-[#3b82f6]/20 opacity-50 blur-[140px]"
     }),
-    React.createElement("div", { className: "absolute inset-0 bg-gradient-to-b from-transparent via-[#1F1F47]/50 to-[#1F1F47]" })
+    React.createElement("div", { className: "absolute inset-0 bg-gradient-to-b from-transparent via-[#05050A]/60 to-[#05050A]" })
   );
 };
 
-const NavbarV3 = () => {
-  return React.createElement("nav", { className: "fixed top-0 inset-x-0 z-50 h-16 glass border-b border-white/10 backdrop-blur-xl flex items-center justify-between px-6 md:px-12" },
-    React.createElement("div", { className: "flex items-center gap-3 cursor-pointer" },
-      React.createElement("img", { src: ASSETS.logo, alt: "DesignCode Logo", className: "h-8 w-auto" }),
-      React.createElement("span", { className: "font-extrabold text-xl tracking-tighter text-white" }, "Design+Code")
-    ),
-    React.createElement("div", { className: "hidden md:flex items-center gap-8 text-sm font-semibold text-white/70" },
-      ["Courses", "Tutorials", "Pricing", "Downloads"].map((item) => 
-        React.createElement("a", { key: item, className: "hover:text-white transition-all" }, item)
-      )
-    ),
-    React.createElement("div", { className: "flex items-center gap-4" },
-      React.createElement("button", { className: "text-white/70 text-sm font-bold hover:text-white transition-colors" }, "Sign In"),
-      React.createElement("button", { className: "px-5 py-2 rounded-xl bg-white text-black font-bold text-sm hover:shadow-2xl hover:scale-105 transition-all" }, "Get Started")
-    )
-  );
-};
+const HeroSectionEnhanced = ({ onAction }) => {
+  const scopeRef = useRef(null);
+  const card1 = useRef(null);
+  const card2 = useRef(null);
 
-const DetailedHero = () => {
-  return React.createElement("section", { className: "relative pt-32 pb-24 px-6 flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto" },
-    React.createElement(motion.div, {
-      initial: { opacity: 0, y: 40 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 1, ease: "easeOut" },
-      className: "flex-1 text-center lg:text-left z-10"
-    },
-      React.createElement("h1", { className: "text-5xl md:text-7xl font-black text-white leading-[1.1] tracking-tight mb-6" }, 
-        "Design   and code  ", 
-        React.createElement("br"), 
-        React.createElement("span", { className: "text-transparent bg-clip-text bg-gradient-to-r from-[#00c6ff] to-[#0072ff]" }, "React apps")
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+      
+      // Intro Reveal Timeline
+      tl.from(".hero-eyebrow", { y: 20, opacity: 0, duration: 0.6, ease: "power3.out" })
+        .from(".hero-heading span", { 
+          y: 50, 
+          opacity: 0, 
+          skewY: 5,
+          stagger: 0.2, 
+          duration: 0.8, 
+          ease: "power4.out" 
+        }, "-=0.3")
+        .from(".hero-para", { y: 30, opacity: 0, duration: 0.8 }, "-=0.5")
+        .from(".hero-btns", { y: 20, opacity: 0, duration: 0.6 }, "-=0.4")
+        .from(".hero-image-stack img", { 
+          scale: 0.8, 
+          opacity: 0, 
+          rotate: 5, 
+          stagger: 0.2, 
+          duration: 1, 
+          ease: "elastic.out(1, 0.8)" 
+        }, "-=0.8");
+
+      // Subtle persistent floating float for mockup items
+      gsap.to(card1.current, {
+        y: -20,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(card2.current, {
+        y: 15,
+        x: 5,
+        duration: 3.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 0.5
+      });
+
+      // Scroll Parallax for visual stacking
+      gsap.to(".hero-image-stack img", {
+        y: (i, el) => -100 * (i + 1),
+        ease: "none",
+        scrollTrigger: {
+          trigger: scopeRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    }, scopeRef);
+    return () => ctx.revert();
+  }, []);
+
+  return React.createElement("section", { ref: scopeRef, className: "relative pt-36 pb-24 px-6 lg:px-16 flex flex-col lg:flex-row items-center gap-16 max-w-7xl mx-auto min-h-[90vh]" },
+    React.createElement("div", { className: "flex-1 text-center lg:text-left z-10" },
+      React.createElement("div", { className: "hero-eyebrow mb-6 inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full border-white/10" },
+         React.createElement(Sparkles, { className: "w-4 h-4 text-indigo-400" }),
+         React.createElement("span", { className: "text-xs font-bold text-indigo-200 uppercase tracking-widest" }, "Enterprise Gen-AI Platform")
       ),
-      React.createElement("p", { className: "text-lg md:text-xl text-white/70 max-w-lg leading-relaxed mb-10 mx-auto lg:mx-0" }, 
-        "Don’t skip design. Learn design and code, by building real apps with React and Swift. Complete courses about the best tools."
+      React.createElement("h1", { className: "hero-heading text-5xl md:text-7xl font-extrabold text-white leading-[1.05] tracking-tight mb-8" }, 
+        React.createElement("span", { className: "block" }, "Prompt The"), 
+        React.createElement("span", { className: "text-gradient block mt-2" }, "Future Workflow")
       ),
-      React.createElement("div", { className: "flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start" },
+      React.createElement("p", { className: "hero-para text-lg md:text-xl text-white/60 max-w-xl leading-relaxed mb-12 mx-auto lg:mx-0 font-light" }, 
+        "The ultimate distributed ecosystem for autonomous prompt chains, logic extraction, and instant deployment. Orchestrate next-gen vectors with precision and speed."
+      ),
+      React.createElement("div", { className: "hero-btns flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start" },
         React.createElement(motion.button, {
-          whileHover: { scale: 1.05, y: -2 },
+          whileHover: { scale: 1.05, boxShadow: "0 0 40px rgba(99,102,241,0.4)" },
           whileTap: { scale: 0.98 },
-          className: "group flex items-center gap-3 px-8 py-4 rounded-3xl bg-white/10 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl hover:bg-white/20 transition-all text-white font-bold text-lg"
+          onClick: onAction,
+          className: "group relative flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black shadow-xl transition-all font-extrabold text-lg hover:bg-slate-100"
         },
-          React.createElement("img", { src: ASSETS.proIcon, className: "w-8 h-8", alt: "" }),
-          "Get Pro Access"
+          "Launch Matrix",
+          React.createElement(ArrowRight, { className: "w-5 h-5 transition-transform group-hover:translate-x-1" })
         ),
-        React.createElement("div", { className: "text-left" },
-          React.createElement("div", { className: "text-white font-extrabold text-lg" }, "$19 per month"),
-          React.createElement("div", { className: "text-white/50 text-sm max-w-[200px]" }, "Includes 50+ courses & videos")
+        React.createElement("div", { className: "flex items-center gap-3 text-left pl-2" },
+           React.createElement("div", { className: "w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20" }, 
+             React.createElement(Terminal, { className: "w-5 h-5 text-indigo-400" })
+           ),
+           React.createElement("div", null,
+             React.createElement("div", { className: "text-white font-bold text-sm" }, "v2.4 Runtime"),
+             React.createElement("div", { className: "text-white/40 text-xs" }, "Distributed Core Activated")
+           )
         )
       )
     ),
-    React.createElement("div", { className: "flex-1 relative w-full max-w-lg h-[450px] md:h-[550px]" },
-      // The layering effect using exact svgs
-      React.createElement(motion.img, {
+    React.createElement("div", { className: "hero-image-stack flex-1 relative w-full max-w-lg h-[350px] md:h-[500px]" },
+      React.createElement("img", {
+        ref: card1,
         src: ASSETS.heroCard1,
-        initial: { opacity: 0, y: 40, scale: 0.9, rotateY: 10 },
-        animate: { opacity: 1, y: 0, scale: 1, rotateY: 0 },
-        transition: { duration: 1.5, ease: "easeOut" },
-        className: "absolute top-0 right-0 w-full h-auto object-contain z-10 drop-shadow-[0_50px_100px_rgba(0,0,0,0.5)]",
-        style: { transformPerspective: 1000 }
+        alt: "Layer",
+        className: "absolute top-0 right-0 w-full h-auto object-contain z-10 filter drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)] transition-transform"
       }),
-      React.createElement(motion.img, {
+      React.createElement("img", {
+        ref: card2,
         src: ASSETS.heroContent,
-        initial: { opacity: 0, x: -40, rotateZ: -5 },
-        animate: { opacity: 1, x: 0, rotateZ: 0 },
-        transition: { duration: 1.2, delay: 0.5 },
-        className: "absolute top-20 left-[-10%] w-[70%] h-auto object-contain z-20 drop-shadow-2xl"
+        alt: "Top layer",
+        className: "absolute top-[15%] left-[-5%] w-[80%] h-auto object-contain z-20 filter drop-shadow-2xl transition-transform"
       })
     )
   );
 };
 
-const ScrollingFeatures = () => {
+const ScrollingTechStack = () => {
   const tech = [
-    { name: "REACT", icon: Code }, { name: "SWIFTUI", icon: Cpu },
-    { name: "FIGMA", icon: Layers }, { name: "SPLINE", icon: Globe },
-    { name: "FRAMER", icon: Zap }, { name: "NODE.JS", icon: Terminal }
+    { name: "NEURAL ENG", icon: Cpu }, { name: "VECTOR DB", icon: Database },
+    { name: "EXEC LOGIC", icon: Code }, { name: "DISTRIBUTED", icon: Globe },
+    { name: "ACCELERATOR", icon: Zap }, { name: "ORCHESTRATOR", icon: Layers }
   ];
   
-  return React.createElement("div", { className: "w-full py-12 border-y border-white/10 overflow-hidden relative bg-white/5 backdrop-blur-md" },
+  return React.createElement("div", { className: "w-full py-10 border-y border-white/5 overflow-hidden relative bg-[#0a0a10]/50 backdrop-blur-md" },
     React.createElement(motion.div, {
-      animate: { x: [0, -1035] },
-      transition: { repeat: Infinity, duration: 30, ease: "linear" },
-      className: "flex items-center gap-20 whitespace-nowrap w-max px-10"
+      animate: { x: [0, -1200] },
+      transition: { repeat: Infinity, duration: 35, ease: "linear" },
+      className: "flex items-center gap-24 whitespace-nowrap w-max px-12"
     },
-      [...tech, ...tech, ...tech].map((t, idx) => 
-        React.createElement("div", { key: idx, className: "flex items-center gap-3 opacity-40 hover:opacity-100 transition-all font-bold tracking-widest text-white select-none" },
-          React.createElement(t.icon, { className: "w-6 h-6" }),
+      [...tech, ...tech, ...tech, ...tech].map((t, idx) => 
+        React.createElement("div", { key: idx, className: "flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity duration-300 font-extrabold tracking-widest text-slate-200 select-none text-xs" },
+          React.createElement(t.icon, { className: "w-5 h-5 text-indigo-400" }),
           React.createElement("span", null, t.name)
         )
       )
@@ -133,169 +208,176 @@ const ScrollingFeatures = () => {
   );
 };
 
-const CourseCard = ({ title, desc, hours, image, color }) => {
-  return React.createElement(motion.div, {
-    whileHover: { scale: 1.03, y: -5 },
-    initial: { opacity: 0, y: 40 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    className: "group relative p-[1px] rounded-[40px] overflow-hidden bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
-  },
-    React.createElement("div", { className: "absolute inset-0 bg-gradient-to-br opacity-40 group-hover:opacity-60 blur-xl transition-opacity", style: { backgroundImage: `linear-gradient(135deg, ${color})` } }),
-    React.createElement("div", { className: "relative bg-[#24244D]/95 backdrop-blur-2xl rounded-[39px] p-8 h-full flex flex-col border border-white/10 shadow-2xl" },
-      React.createElement("div", { className: "w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-8 shadow-lg", style: { backgroundImage: `linear-gradient(135deg, ${color})` } },
-        React.createElement("img", { src: image, className: "w-10 h-10 object-contain", alt: "" })
-      ),
-      React.createElement("h3", { className: "text-xl md:text-2xl font-extrabold text-white mb-3 leading-tight" }, title),
-      React.createElement("p", { className: "text-white/60 text-sm leading-relaxed mb-6 line-clamp-3" }, desc),
-      React.createElement("div", { className: "mt-auto pt-6 border-t border-white/5 flex justify-between items-center" },
-        React.createElement("span", { className: "text-xs font-bold text-white/40 tracking-wider" }, hours.toUpperCase()),
-        React.createElement(ArrowRight, { className: "w-5 h-5 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" })
-      )
-    )
-  );
-};
-
-const CoursesGrid = () => {
+const GridShowcase = () => {
+  const container = useRef(null);
   const items = [
-    { title: "Master AI Prompting", desc: "Learn to leverage AI tools like Aura for creating beautiful designs and advanced prompts.", hours: "10 hours", image: ASSETS.course1, color: "#FF4ECD, #FF72E1" },
-    { title: "Build SwiftUI Apps", desc: "Explore exciting new features of SwiftUI 6 and Xcode 16 for building premium iOS 18 apps.", hours: "5 hours", image: ASSETS.course2, color: "#007CF0, #00DFD8" },
-    { title: "No-Code with Framer", desc: "Create modern user interfaces using dark mode and glass designs and auto layout.", hours: "4 hours", image: ASSETS.course3, color: "#7928CA, #FF0080" },
-    { title: "Full React Site", desc: "Build web apps from the ground up using React for frontend and Firebase for scale.", hours: "6 hours", image: ASSETS.course4, color: "#FF4B2B, #FF416C" }
+    { title: "Advanced Context Injection", desc: "Inject stateful environmental memories into neural stream responses dynamically.", icon: Sparkles, color: "from-indigo-500 to-cyan-400" },
+    { title: "Autonomous Sub-Agent Chains", desc: "Build complex multi-step iterative logical loops across independent worker clusters.", icon: Layers, color: "from-purple-500 to-pink-500" },
+    { title: "Zero-Latency Inference", desc: "Stream responses through high-velocity distribution edge nodes for sub-second handshakes.", icon: Zap, color: "from-amber-400 to-orange-500" },
+    { title: "Encrypted Vector Isolation", desc: "Enterprise-grade logic guardrails ensures strictly compartmentalized execution.", icon: Shield, color: "from-emerald-400 to-teal-500" }
   ];
 
-  return React.createElement("section", { className: "py-24 px-6 max-w-7xl mx-auto" },
-    React.createElement("div", { className: "text-center mb-16" },
-      React.createElement("span", { className: "text-white/50 font-bold tracking-[0.2em] text-sm mb-4 block" }, "300 HOURS OF COURSES"),
-      React.createElement("h2", { className: "text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" }, "Learn the best tools and platforms"),
-      React.createElement("p", { className: "text-white/60 text-lg max-w-2xl mx-auto" }, "We focus on industry leading platforms so that you can be prepared for your next job. Then we teach all we can about them.")
-    ),
-    React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" },
-      items.map((item, idx) => React.createElement(CourseCard, { key: idx, ...item }))
-    )
-  );
-};
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      gsap.from(".grid-card", {
+        y: 80,
+        opacity: 0,
+        scale: 0.95,
+        stagger: 0.15,
+        duration: 1.2,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: container.current,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        }
+      });
+    }, container);
+    return () => ctx.revert();
+  }, []);
 
-const PricingV3 = () => {
-  const tiers = [
-    { name: "Basic", price: "Free", features: ["Free courses", "5 Premium Videos", "Notify me, Favorite"] },
-    { name: "Pro", price: "$19", features: ["All courses and videos", "Source files, ePub", "Certificates, Tests", "Commercial use"], active: true },
-    { name: "Team", price: "$25", features: ["5 users included", "Manage subscriptions", "Team progress reporting"] }
-  ];
-
-  return React.createElement("section", { className: "py-24 px-6" },
-    React.createElement("div", { className: "text-center mb-16" },
-      React.createElement("h2", { className: "text-4xl md:text-5xl font-black text-white tracking-tight" }, "Ready to start?")
+  return React.createElement("section", { ref: container, className: "py-32 px-6 lg:px-12 max-w-7xl mx-auto" },
+    React.createElement("div", { className: "text-center mb-20" },
+      React.createElement("span", { className: "text-indigo-400 font-black tracking-[0.25em] text-xs mb-4 block uppercase" }, "Core Matrix Architecture"),
+      React.createElement("h2", { className: "text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight" }, "Unparalleled Capabilities"),
+      React.createElement("p", { className: "text-white/50 text-lg max-w-2xl mx-auto font-light" }, "We merged bleeding-edge prompt methodology with distributed compute engines to resolve enterprise challenges.")
     ),
-    React.createElement("div", { className: "grid md:grid-cols-3 gap-8 max-w-5xl mx-auto" },
-      tiers.map((tier, i) => 
-        React.createElement("div", { 
-          key: i, 
-          className: `glass p-10 rounded-[40px] border transition-all ${tier.active ? 'border-white/30 scale-105 bg-gradient-to-b from-white/10 to-transparent shadow-2xl z-10' : 'border-white/10 opacity-80 hover:opacity-100 hover:scale-105'}`
-        },
-          React.createElement("span", { className: "text-white/50 text-sm font-bold tracking-widest uppercase" }, tier.name),
-          React.createElement("div", { className: "mt-4 flex items-baseline text-white" },
-            React.createElement("span", { className: "text-5xl font-black" }, tier.price),
-            tier.price !== 'Free' && React.createElement("span", { className: "text-white/60 text-sm ml-2" }, "per month")
+    React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" },
+      items.map((item, idx) => React.createElement("div", {
+        key: idx,
+        className: "grid-card group relative rounded-[32px] p-[1px] bg-white/5 hover:bg-white/10 transition-all cursor-pointer overflow-hidden shadow-2xl"
+      },
+        React.createElement("div", { className: `absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-br ${item.color} blur-xl transition-all duration-500` }),
+        React.createElement("div", { className: "relative h-full bg-[#0c0c14] glass-card p-8 flex flex-col rounded-[31px] border border-white/[0.04]" },
+          React.createElement("div", { className: `w-14 h-14 rounded-2xl flex items-center justify-center mb-8 bg-gradient-to-br ${item.color} bg-opacity-10 relative` },
+            React.createElement("div", { className: "absolute inset-0 opacity-20 rounded-2xl bg-white mix-blend-overlay" }),
+            React.createElement(item.icon, { className: "w-6 h-6 text-white" })
           ),
-          React.createElement("ul", { className: "mt-8 space-y-4 mb-10" },
-            tier.features.map((feat, idx) => 
-              React.createElement("li", { key: idx, className: "flex items-center gap-3 text-white/70 text-sm" },
-                React.createElement(Check, { className: "w-4 h-4 text-green-400" }),
-                feat
-              )
-            )
-          ),
-          React.createElement("button", { className: `w-full py-4 rounded-2xl font-bold text-sm transition-all ${tier.active ? 'bg-white text-black shadow-lg hover:bg-white/90' : 'border border-white/20 text-white hover:bg-white/5'}` }, 
-            tier.active ? "Subscribe" : "Sign Up"
+          React.createElement("h3", { className: "text-xl font-bold text-white mb-4 leading-tight" }, item.title),
+          React.createElement("p", { className: "text-white/50 text-sm font-light leading-relaxed mb-8" }, item.desc),
+          React.createElement("div", { className: "mt-auto pt-4 flex justify-between items-center border-t border-white/5" },
+            React.createElement("span", { className: "text-[10px] font-bold text-indigo-400 tracking-wider uppercase" }, "Enabled"),
+            React.createElement(ArrowRight, { className: "w-4 h-4 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" })
           )
         )
+      ))
+    )
+  );
+};
+
+const FeatureRow = () => {
+  const rowRef = useRef(null);
+
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      gsap.from(".feat-content", {
+        x: -60,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: rowRef.current,
+          start: "top 75%",
+        }
+      });
+      gsap.from(".feat-visual", {
+        x: 60,
+        opacity: 0,
+        duration: 1,
+        delay: 0.2,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: rowRef.current,
+          start: "top 75%",
+        }
+      });
+    }, rowRef);
+    return () => ctx.revert();
+  }, []);
+
+  return React.createElement("section", { ref: rowRef, className: "py-24 px-6 lg:px-20 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center" },
+    React.createElement("div", { className: "feat-content" },
+       React.createElement("h2", { className: "text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight" }, "Streamlined Node Workspaces"),
+       React.createElement("p", { className: "text-white/60 text-lg mb-8 leading-relaxed" }, "Control complex execution vectors from a unified visual board. No cognitive overload, just raw logical clarity."),
+       React.createElement("ul", { className: "space-y-4" },
+         ["Live Trace Visualization", "Parallel Branching Chains", "Integrated Sandbox Runtimes"].map((x, i) => 
+           React.createElement("li", { key: i, className: "flex items-center gap-3 text-white/80" },
+             React.createElement("div", { className: "w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center" }, React.createElement(Check, { className: "w-3 h-3 text-emerald-400" })),
+             React.createElement("span", { className: "text-sm font-medium" }, x)
+           )
+         )
+       )
+    ),
+    React.createElement("div", { className: "feat-visual relative aspect-video glass-card rounded-3xl border border-white/10 p-4 bg-black/40 overflow-hidden group" },
+      React.createElement("div", { className: "absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" }),
+      React.createElement("div", { className: "flex gap-1.5 mb-4 items-center" },
+        [1,2,3].map(c => React.createElement("div", { key: c, className: "w-3 h-3 rounded-full bg-white/10" }))
+      ),
+      React.createElement("div", { className: "w-full h-full rounded-xl bg-[#0c0c14] border border-white/5 flex items-center justify-center relative font-mono text-indigo-500/50 text-xs select-none" },
+        "// System Live Render Active",
+        React.createElement(Terminal, { className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 opacity-10" })
       )
     )
   );
 };
 
-const FooterV3 = () => {
-  return React.createElement("footer", { className: "py-16 border-t border-white/10 glass mt-auto text-center" },
-    React.createElement("img", { src: ASSETS.logo, className: "h-10 mx-auto opacity-50 mb-6", alt: "" }),
-    React.createElement("p", { className: "text-white/40 text-xs mb-2" }, "Site made with React, Next.js and Spline."),
-    React.createElement("p", { className: "text-white/60 text-sm font-medium" }, "Design+Code © 2025")
+const UltimateCTA = ({ onAction }) => {
+  return React.createElement("section", { className: "py-32 px-6" },
+    React.createElement(motion.div, {
+      whileInView: { y: [50, 0], opacity: [0, 1] },
+      viewport: { once: true },
+      transition: { duration: 1, ease: "easeOut" },
+      className: "max-w-4xl mx-auto text-center relative glass-card rounded-[40px] p-12 md:p-20 border border-indigo-500/20 bg-[#0a0a18] overflow-hidden"
+    },
+      React.createElement("div", { className: "absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" }),
+      React.createElement("h2", { className: "text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight" }, "Ready to Accelerate?"),
+      React.createElement("p", { className: "text-white/50 text-lg mb-10 max-w-lg mx-auto font-light" }, "Deploy the dynamic ecosystem in under 60 seconds. No overhead, just instant scale."),
+      React.createElement("button", {
+        onClick: onAction,
+        className: "px-10 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-[0_0_40px_rgba(99,102,241,0.3)] hover:scale-105 transition-all hover:shadow-[0_0_60px_rgba(99,102,241,0.5)]"
+      }, "Initialize Ecosystem")
+    )
   );
 };
 
-const HandbooksSection = () => {
-  const books = [
-    { name: "Design System in Figma", count: "10 sections", img: "https://designcode.io/images/illustrations/team.svg", color: "#00C6FF" },
-    { name: "React Hooks Handbook", count: "8 sections", img: "https://designcode.io/images/illustrations/react.svg", color: "#7928CA" },
-    { name: "SwiftUI Handbook", count: "12 sections", img: "https://designcode.io/images/illustrations/swiftui.svg", color: "#FF4B2B" },
-    { name: "Spline 3D Handbook", count: "7 sections", img: "https://designcode.io/images/illustrations/spline.svg", color: "#F9CB28" }
-  ];
-
-  return React.createElement("section", { className: "py-24 px-6 max-w-7xl mx-auto" },
-    React.createElement("div", { className: "mb-12 flex flex-col md:flex-row justify-between items-end" },
-      React.createElement("div", null,
-        React.createElement("span", { className: "text-[#FF4ECD] font-bold tracking-widest text-xs mb-2 block" }, "PREMIUM HANDBOOKS"),
-        React.createElement("h2", { className: "text-3xl md:text-4xl font-black text-white" }, "Master coding techniques")
-      ),
-      React.createElement("button", { className: "text-white/60 hover:text-white text-sm font-bold flex items-center gap-2 transition-colors mt-4 md:mt-0" }, "View All Handbooks", React.createElement(ArrowRight, { className: "w-4 h-4" }))
+const SubNavbar = () => {
+  return React.createElement("nav", { className: "fixed top-0 inset-x-0 z-50 h-16 glass border-b border-white/[0.05] flex items-center justify-between px-8 md:px-16" },
+    React.createElement("div", { className: "flex items-center gap-3 cursor-pointer group" },
+      React.createElement("img", { src: ASSETS.logo, alt: "Logo", className: "h-7 w-auto transition-transform group-hover:rotate-12" }),
+      React.createElement("span", { className: "font-black text-lg tracking-[0.15em] text-white" }, "GUIDESOFT")
     ),
-    React.createElement("div", { className: "grid md:grid-cols-2 lg:grid-cols-4 gap-6" },
-      books.map((b, i) => 
-        React.createElement(motion.div, {
-          key: i,
-          whileHover: { y: -5, scale: 1.02 },
-          className: "group glass rounded-[30px] p-6 flex flex-col items-center text-center cursor-pointer hover:border-white/20 transition-all"
-        },
-          React.createElement("div", { className: "w-24 h-24 mb-6 relative" },
-             React.createElement("div", { className: "absolute inset-0 blur-2xl opacity-40 group-hover:opacity-70 transition-opacity rounded-full", style: { backgroundColor: b.color } }),
-             React.createElement("img", { src: b.img, className: "w-full h-full object-contain relative z-10 drop-shadow-xl", alt: "" })
-          ),
-          React.createElement("h3", { className: "text-lg font-bold text-white mb-1" }, b.name),
-          React.createElement("p", { className: "text-xs text-white/40 font-bold tracking-widest uppercase" }, b.count)
+    React.createElement("div", { className: "hidden md:flex items-center gap-10 text-xs font-bold text-white/50 tracking-widest" },
+      ["MATRIX", "NODES", "LOGIC", "DOCS"].map((item) => 
+        React.createElement("a", { key: item, className: "hover:text-white transition-all cursor-pointer relative group" }, 
+          item,
+          React.createElement("div", { className: "absolute -bottom-1 left-0 w-0 h-[1px] bg-indigo-500 group-hover:w-full transition-all duration-300" })
         )
       )
-    )
-  );
-};
-
-const CertificateSection = () => {
-  return React.createElement("section", { className: "py-20 px-6" },
-    React.createElement("div", { className: "max-w-5xl mx-auto glass bg-gradient-to-br from-white/10 to-transparent rounded-[50px] border border-white/20 p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden" },
-      React.createElement("div", { className: "absolute top-0 right-0 w-96 h-96 bg-[#00C6FF]/20 blur-[100px] rounded-full -mr-40 -mt-40" }),
-      React.createElement("div", { className: "flex-1 text-center md:text-left relative z-10" },
-        React.createElement("div", { className: "flex justify-center md:justify-start gap-2 mb-6" },
-          [...Array(5)].map((_, i) => React.createElement(Star, { key: i, className: "w-5 h-5 fill-[#F9CB28] text-[#F9CB28]" }))
-        ),
-        React.createElement("h2", { className: "text-3xl md:text-5xl font-black text-white mb-6 leading-tight" }, "Earn Certificates to boost your career"),
-        React.createElement("p", { className: "text-white/60 text-lg mb-8" }, "Upon completion of each track, you’ll earn a beautiful personalized certificate. Add them to your LinkedIn or resume to stand out."),
-        React.createElement("button", { className: "px-8 py-3 rounded-2xl bg-[#007CF0] hover:bg-[#007CF0]/80 text-white font-bold text-sm shadow-lg shadow-[#007CF0]/30 transition-all" }, "Discover Certificates")
-      ),
-      React.createElement("div", { className: "w-full max-w-xs relative" },
-        React.createElement(motion.div, {
-          animate: { rotate: [0, 360] },
-          transition: { duration: 40, repeat: Infinity, ease: "linear" },
-          className: "absolute inset-0 bg-gradient-to-tr from-[#FF4ECD] to-[#00C6FF] opacity-30 blur-[50px] rounded-full"
-        }),
-        React.createElement("img", { 
-          src: "https://designcode.io/images/icons/courses.svg", 
-          className: "w-full h-auto relative z-10 drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] filter brightness-110 saturate-150",
-          alt: "Certificate Badge" 
-        })
-      )
+    ),
+    React.createElement("div", { className: "flex items-center gap-4" },
+      React.createElement("button", { className: "px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-white/80 font-bold text-xs tracking-widest hover:bg-white/10 transition-all" }, "LOGIN")
     )
   );
 };
 
 export const DesignCodeMasterView = ({ onAction }) => {
-  return React.createElement("main", { className: "relative min-h-screen w-full text-white overflow-x-hidden flex flex-col font-sans selection:bg-[#00C6FF] selection:text-black" },
+  // Smooth entrance wrapper
+  useLayoutEffect(() => {
+     window.scrollTo(0,0);
+  }, []);
+
+  return React.createElement("main", { className: "relative min-h-screen w-full text-white overflow-x-hidden flex flex-col font-sans selection:bg-indigo-500 selection:text-white" },
     React.createElement(MasterBackground),
-    React.createElement(NavbarV3),
-    React.createElement(DetailedHero),
-    React.createElement(ScrollingFeatures),
-    React.createElement(CoursesGrid),
-    React.createElement(HandbooksSection),
-    React.createElement(CertificateSection),
-    React.createElement(PricingV3),
-    React.createElement(FooterV3)
+    // Reusing simple internal Navbar specific to this view to show distinct polish, 
+    // though logically linked to root frame via container if needed.
+    React.createElement(HeroSectionEnhanced, { onAction }),
+    React.createElement(ScrollingTechStack),
+    React.createElement(GridShowcase),
+    React.createElement(FeatureRow),
+    React.createElement(UltimateCTA, { onAction }),
+    React.createElement("footer", { className: "py-16 border-t border-white/5 glass text-center mt-20" },
+       React.createElement("img", { src: ASSETS.logo, className: "h-6 mx-auto opacity-30 mb-4 filter grayscale", alt: "" }),
+       React.createElement("p", { className: "text-white/20 text-[10px] font-bold tracking-widest" }, "GUIDESOFT AI ECOSYSTEM © 2026. ALL RIGHTS RESERVED.")
+    )
   );
 };

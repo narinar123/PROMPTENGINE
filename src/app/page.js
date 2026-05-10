@@ -17,66 +17,86 @@ export default function App() {
 
   // Centralized Router Matrix
   const renderContent = () => {
+    let content = null;
     switch(currentRoute) {
       case "solutions":
-        return React.createElement(SolutionsView);
+        content = React.createElement(SolutionsView);
+        break;
       case "pricing":
-        return React.createElement(PricingView);
+        content = React.createElement(PricingView);
+        break;
       case "docs":
-        return React.createElement(DocsView);
+        content = React.createElement(DocsView);
+        break;
       case "tools":
-        return React.createElement(ToolsDirectoryView, { onSelectTool: navigateToTool });
+        content = React.createElement(ToolsDirectoryView, { onSelectTool: navigateToTool });
+        break;
       case "single-tool":
-        return React.createElement(SingleToolWorkspace, { toolId: activeToolId, onBack: () => setCurrentRoute("tools") });
+        content = React.createElement(SingleToolWorkspace, { toolId: activeToolId, onBack: () => setCurrentRoute("tools") });
+        break;
       case "workflows":
-        return React.createElement("div", { className: "pt-20 bg-[#0c0c0e] min-h-screen" }, React.createElement(WorkflowPlayground));
+        content = React.createElement("div", { className: "pt-20 bg-[#0c0c0e] min-h-screen" }, React.createElement(WorkflowPlayground));
+        break;
       default:
-        return React.createElement(DesignCodeMasterView, { onAction: () => setCurrentRoute("tools") });
+        content = React.createElement(DesignCodeMasterView, { onAction: () => setCurrentRoute("tools") });
     }
+
+    return React.createElement(motion.div, {
+      key: currentRoute,
+      initial: { opacity: 0, y: 10 },
+      animate: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: -10 },
+      transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+    }, content);
   };
 
   return React.createElement(AuthManager, null,
-    React.createElement("main", { className: "min-h-screen w-full bg-background text-foreground overflow-x-hidden flex flex-col" },
+    React.createElement("main", { className: "min-h-screen w-full bg-[#050506] text-white overflow-x-hidden flex flex-col" },
       React.createElement(RoleSwitcher),
 
-      React.createElement("nav", { className: "fixed top-0 inset-x-0 z-50 h-16 glass border-b border-white/5 flex items-center justify-between px-6 md:px-12" },
+      /* PREMIUM NAV LAYER */
+      React.createElement("nav", { className: "fixed top-0 inset-x-0 z-[100] h-16 glass border-b border-white/[0.03] backdrop-blur-2xl flex items-center justify-between px-6 md:px-16" },
         React.createElement("div", { 
-          className: "flex items-center gap-3 font-heading font-bold text-xl tracking-tight text-white cursor-pointer",
+          className: "flex items-center gap-3 font-extrabold text-xl tracking-[0.1em] text-white cursor-pointer group",
           onClick: () => { setCurrentRoute("home"); setActiveToolId(null); }
         },
           React.createElement("img", { 
             src: "https://www.gsgroups.net/gslogo.png", 
             alt: "Logo", 
-            className: "h-8 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" 
+            className: "h-8 w-auto transition-transform duration-500 group-hover:rotate-[360deg]" 
           }),
-          React.createElement("span", { className: "tracking-widest font-extrabold" }, "GUIDESOFT")
+          React.createElement("span", null, "GUIDESOFT")
         ),
-        React.createElement("div", { className: "hidden md:flex items-center gap-8 text-sm text-slate-400 font-medium" },
+        React.createElement("div", { className: "hidden md:flex items-center gap-10 text-[10px] font-black text-white/40 tracking-[0.2em] uppercase" },
           [
-            { id: "home", label: "Home" },
-            { id: "tools", label: "AI Tools" },
-            { id: "solutions", label: "Solutions" },
-            { id: "docs", label: "Docs" },
-            { id: "pricing", label: "Pricing" }
+            { id: "home", label: "Index" },
+            { id: "tools", label: "Matrix" },
+            { id: "solutions", label: "Nodes" },
+            { id: "docs", label: "Schema" },
+            { id: "pricing", label: "Quotas" }
           ].map(item => React.createElement("button", {
             key: item.id,
             onClick: () => { setCurrentRoute(item.id); setActiveToolId(null); },
-            className: `transition-all ${currentRoute === item.id ? 'text-white font-bold' : 'hover:text-white'}`
-          }, item.label))
+            className: `transition-all duration-300 relative hover:text-white ${currentRoute === item.id ? 'text-white' : ''}`
+          }, 
+             item.label,
+             currentRoute === item.id && React.createElement(motion.div, {
+               layoutId: "navIndicator",
+               className: "absolute -bottom-6 left-0 right-0 h-[2px] bg-indigo-500 rounded-full shadow-[0_0_12px_rgba(99,102,241,1)]"
+             })
+          ))
         ),
         React.createElement("div", { className: "flex items-center gap-4" },
           React.createElement("button", { 
              onClick: () => setCurrentRoute("tools"),
-             className: "px-4 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-slate-200 transition-all" 
-          }, "Launch Node Matrix")
+             className: "px-5 py-2 bg-white text-black text-xs font-black tracking-widest uppercase rounded-lg hover:bg-slate-200 hover:scale-105 transition-all active:scale-95" 
+          }, "Initialize")
         )
       ),
 
-      /* Dynamic Routed Content Ingress */
-      React.createElement("div", { className: "flex-1" }, renderContent()),
-
-      React.createElement("footer", { className: "py-12 border-t border-white/5 glass text-center text-slate-500 text-xs mt-auto" },
-        React.createElement("div", null, "© 2026 GS Prompt Hero AI. All access reserved.")
+      /* Dynamic Routed Content Ingress with AnimatePresence */
+      React.createElement("div", { className: "flex-1 relative" }, 
+        React.createElement(AnimatePresence, { mode: "wait" }, renderContent())
       )
     )
   );

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
 import { 
   ArrowRight, FileText, Edit, Repeat, CheckCircle, 
   BookOpen, Mail, MessageSquare, Briefcase, Copy,
@@ -39,57 +40,105 @@ const CATEGORIES = ["All Tools", "Writing", "Editing", "Creative", "Marketing", 
 
 export const ToolsDirectoryView = ({ onSelectTool }) => {
   const [activeCat, setActiveCat] = useState("All Tools");
+  const containerRef = useRef(null);
 
   const filteredTools = activeCat === "All Tools" 
     ? AI_TOOLS_REGISTRY 
     : AI_TOOLS_REGISTRY.filter(t => t.cat === activeCat);
 
-  return React.createElement(motion.div, {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    className: "pt-28 pb-20 px-6 max-w-7xl mx-auto"
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(".tool-card", 
+        { opacity: 0, y: 40, scale: 0.95 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          duration: 0.6, 
+          stagger: {
+             each: 0.06,
+             grid: "auto",
+             from: "start"
+          },
+          ease: "power3.out",
+          clearProps: "all"
+        }
+      );
+
+      gsap.fromTo(".cat-pill", 
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, stagger: 0.05, ease: "back.out(1.7)", duration: 0.5, delay: 0.1 }
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [activeCat]);
+
+  return React.createElement("div", {
+    ref: containerRef,
+    className: "pt-32 pb-24 px-6 max-w-7xl mx-auto relative"
   },
-    React.createElement("div", { className: "text-center mb-16" },
-      React.createElement("div", { className: "inline-flex items-center gap-2 px-3 py-1.5 mb-6 border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl rounded-full text-xs font-bold text-emerald-400 uppercase tracking-widest" }, 
-        React.createElement(Sparkles, { className: "w-3 h-3" }), "All-in-One Assistant Platform"
+    // Dynamic Background Orbs
+    React.createElement("div", { className: "absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -z-10 animate-pulse" }),
+    React.createElement("div", { className: "absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl -z-10" }),
+
+    React.createElement("div", { className: "text-center mb-16 relative z-10" },
+      React.createElement("div", { className: "inline-flex items-center gap-2 px-4 py-1.5 mb-8 border border-emerald-500/20 bg-emerald-500/10 backdrop-blur-xl rounded-full text-xs font-bold text-emerald-400 uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.15)]" }, 
+        React.createElement(Sparkles, { className: "w-3 h-3" }), "Intelligent Production Network"
       ),
-      React.createElement("h2", { className: "text-5xl font-extrabold text-white tracking-tight mb-4" }, "Discover Our AI Tools"),
-      React.createElement("p", { className: "text-slate-400 max-w-2xl mx-auto text-lg" }, "Explore our comprehensive suite of specialized engines designed to enhance production velocity.")
+      React.createElement("h2", { className: "text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 tracking-tight mb-6 drop-shadow-2xl" }, "Neural Engine Index"),
+      React.createElement("p", { className: "text-slate-400 max-w-2xl mx-auto text-xl font-light leading-relaxed" }, 
+        "Synchronize your creative workflow with our elite roster of specialized AI models and language augmentations."
+      )
     ),
 
-    /* Category Filter Grid - EXACT REPLICATION OF CLONE BEHAVIOR but modern */
-    React.createElement("div", { className: "flex gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide justify-center" },
-      CATEGORIES.map(c => React.createElement("button", {
+    /* Premium Category Filter Ribbon */
+    React.createElement("div", { className: "flex flex-wrap gap-3 mb-16 overflow-x-auto pb-4 justify-center px-4 relative z-10" },
+      CATEGORIES.map((c, idx) => React.createElement("button", {
         key: c,
         onClick: () => setActiveCat(c),
-        className: `px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${activeCat === c ? 'bg-primary border-primary text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'}`
-      }, c))
+        className: `cat-pill group px-6 py-3 rounded-2xl text-sm font-bold whitespace-nowrap border transition-all duration-500 flex items-center gap-2 ${
+            activeCat === c 
+                ? 'bg-gradient-to-r from-primary to-indigo-600 border-transparent text-white shadow-[0_8px_30px_rgba(79,70,229,0.3)] translate-y-[-2px]' 
+                : 'glass-card border-white/5 text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/10 hover:translate-y-[-1px]'
+        }`
+      }, 
+        c,
+        activeCat === c && React.createElement(motion.div, {
+            layoutId: "cat-spark",
+            className: "w-1.5 h-1.5 rounded-full bg-white animate-pulse"
+        })
+      ))
     ),
 
-    React.createElement(motion.div, { 
-      layout: true,
-      className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" 
+    /* Fluid Dynamic Grid */
+    React.createElement("div", { 
+      className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10" 
     },
       filteredTools.map((tool, idx) => 
-        React.createElement(motion.div, {
-          layout: true,
-          key: tool.id,
-          initial: { opacity: 0, scale: 0.9 },
-          animate: { opacity: 1, scale: 1 },
-          whileHover: { y: -5, scale: 1.02 },
-          className: "glass p-6 rounded-2xl cursor-pointer hover:border-primary/40 group relative overflow-hidden transition-all duration-300",
+        React.createElement("div", {
+          key: tool.id + activeCat, // Key iteration forces layout cycle for seamless GSAP targeting
+          className: "tool-card group cursor-pointer perspective-1000",
           onClick: () => onSelectTool(tool.id)
         },
-          React.createElement("div", { className: "absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity" },
-            React.createElement(tool.icon || Sparkles, { className: "w-16 h-16 text-primary" })
-          ),
-          React.createElement("div", { className: "w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white text-primary transition-colors" },
-            React.createElement(tool.icon || Sparkles, { className: "w-5 h-5" })
-          ),
-          React.createElement("h3", { className: "text-lg font-bold text-white mb-2" }, tool.name),
-          React.createElement("p", { className: "text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2" }, tool.desc),
-          React.createElement("div", { className: "flex items-center text-xs text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity" }, 
-            "Initialize Node ", React.createElement(ArrowRight, { className: "w-3 h-3 ml-1" })
+          React.createElement("div", { 
+            className: "glass-card h-full p-8 rounded-3xl border border-white/5 relative overflow-hidden transition-all duration-500 group-hover:border-primary/50 group-hover:bg-gradient-to-br group-hover:from-white/[0.07] group-hover:to-primary/[0.03] group-hover:-translate-y-2 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]" 
+          },
+            /* Ambient Glow Overlay */
+            React.createElement("div", { className: "absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-transparent transition-all duration-500" }),
+            
+            /* Icon Housing */
+            React.createElement("div", { className: "w-14 h-14 rounded-2xl bg-slate-900/50 border border-white/5 flex items-center justify-center mb-6 text-slate-400 group-hover:text-white group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-indigo-600 group-hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-500 transform group-hover:rotate-3" },
+              React.createElement(tool.icon || Sparkles, { className: "w-6 h-6 transition-transform duration-500 group-hover:scale-110" })
+            ),
+
+            React.createElement("h3", { className: "text-xl font-bold text-white mb-3 tracking-tight transition-colors group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-indigo-200" }, tool.name),
+            React.createElement("p", { className: "text-sm text-slate-500 leading-relaxed mb-6 line-clamp-2 font-medium group-hover:text-slate-300 transition-colors" }, tool.desc),
+            
+            React.createElement("div", { className: "flex items-center justify-between pt-4 border-t border-white/5 text-xs font-bold tracking-widest text-primary opacity-40 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0" }, 
+              React.createElement("span", null, "LAUNCH INSTANCE"), 
+              React.createElement(ArrowRight, { className: "w-4 h-4 transform group-hover:translate-x-1 transition-transform" })
+            )
           )
         )
       )
@@ -100,11 +149,25 @@ export const ToolsDirectoryView = ({ onSelectTool }) => {
 export const SingleToolWorkspace = ({ toolId, onBack }) => {
   const tool = AI_TOOLS_REGISTRY.find(t => t.id === toolId) || AI_TOOLS_REGISTRY[0];
   const { role } = useAuth();
+  const containerRef = useRef(null);
   
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useLayoutEffect(() => {
+     const ctx = gsap.context(() => {
+        gsap.from(".ws-element", {
+            opacity: 0,
+            y: 30,
+            stagger: 0.1,
+            duration: 0.8,
+            ease: "power3.out"
+        });
+     }, containerRef);
+     return () => ctx.revert();
+  }, []);
 
   const executeTool = async () => {
     if (role === 'guest') {
@@ -136,67 +199,103 @@ export const SingleToolWorkspace = ({ toolId, onBack }) => {
     }
   };
 
-  return React.createElement(motion.div, {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    className: "pt-24 min-h-screen max-w-7xl mx-auto px-6 pb-20"
+  return React.createElement("div", {
+    ref: containerRef,
+    className: "pt-32 min-h-screen max-w-7xl mx-auto px-6 pb-24 relative"
   },
+    /* Kinetic Lighting */
+    React.createElement("div", { className: "absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent -z-10" }),
+
     /* Breadcrumb & Header */
-    React.createElement("div", { className: "mb-8 flex flex-col items-start" },
-      React.createElement("button", { onClick: onBack, className: "text-slate-500 hover:text-white flex items-center gap-2 text-sm font-medium mb-4" },
-        React.createElement(ArrowRight, { className: "w-4 h-4 rotate-180" }), " Return to Vector Index"
+    React.createElement("div", { className: "ws-element mb-12 flex flex-col items-start" },
+      React.createElement("button", { 
+          onClick: onBack, 
+          className: "text-slate-500 hover:text-primary flex items-center gap-2 text-sm font-bold mb-6 transition-colors group bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:border-primary/20 hover:bg-primary/5" 
+      },
+        React.createElement(ArrowRight, { className: "w-4 h-4 rotate-180 transition-transform group-hover:-translate-x-1" }), 
+        "INDEX OVERVIEW"
       ),
-      React.createElement("div", { className: "flex items-center gap-4" },
-        React.createElement("div", { className: "w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center text-primary" },
-            React.createElement(tool.icon || Sparkles, { className: "w-7 h-7" })
+      React.createElement("div", { className: "flex items-center gap-6" },
+        React.createElement("div", { className: "w-20 h-20 bg-gradient-to-br from-primary to-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-[0_10px_40px_rgba(99,102,241,0.3)] rotate-3" },
+            React.createElement(tool.icon || Sparkles, { className: "w-10 h-10" })
         ),
         React.createElement("div", null,
-            React.createElement("h1", { className: "text-3xl font-extrabold text-white" }, tool.name),
-            React.createElement("p", { className: "text-slate-400" }, tool.desc)
+            React.createElement("h1", { className: "text-5xl font-black text-white tracking-tight mb-2" }, tool.name),
+            React.createElement("div", { className: "flex items-center gap-3" },
+                React.createElement("span", { className: "px-3 py-1 rounded-md bg-primary/10 border border-primary/20 text-primary font-bold text-xs tracking-widest uppercase" }, tool.cat),
+                React.createElement("p", { className: "text-slate-400 font-medium" }, tool.desc)
+            )
         )
       )
     ),
 
     /* Unified Interface Block */
-    React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-300px)] min-h-[500px]" },
+    React.createElement("div", { className: "ws-element grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-350px)] min-h-[600px]" },
         /* Input Terminal */
-        React.createElement("div", { className: "glass rounded-3xl flex flex-col p-6" },
-            React.createElement("div", { className: "flex justify-between items-center mb-4" },
-                React.createElement("div", { className: "text-xs font-bold tracking-widest text-slate-500 uppercase" }, "Source Stream"),
-                React.createElement("div", { className: "text-[10px] font-mono text-slate-600" }, `${inputText.length} Characters`)
+        React.createElement("div", { className: "glass-card bg-[#0B0F19]/50 backdrop-blur-3xl rounded-[32px] flex flex-col p-8 border border-white/5 shadow-2xl relative group" },
+            React.createElement("div", { className: "absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none rounded-[32px]" }),
+            React.createElement("div", { className: "flex justify-between items-center mb-6 relative z-10" },
+                React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("div", { className: "w-2 h-2 rounded-full bg-indigo-500 animate-pulse" }),
+                    React.createElement("div", { className: "text-xs font-bold tracking-widest text-indigo-400 uppercase" }, "SOURCE DATASET")
+                ),
+                React.createElement("div", { className: "text-[11px] font-mono bg-slate-900 px-2 py-1 rounded border border-white/5 text-slate-500" }, `${inputText.length} BYTES`)
             ),
             React.createElement("textarea", {
                 value: inputText,
                 onChange: (e) => setInputText(e.target.value),
-                placeholder: `Provide source content to feed into the ${tool.name} matrix...`,
-                className: "flex-1 bg-black/20 rounded-2xl p-6 text-slate-300 font-medium resize-none focus:outline-none border border-white/5 focus:border-primary/30 transition-colors"
+                placeholder: `Drop vector parameters here for ${tool.name} conversion...`,
+                className: "flex-1 bg-black/30 backdrop-blur-md rounded-2xl p-8 text-slate-300 font-medium resize-none focus:outline-none border border-white/5 focus:border-primary/40 focus:bg-black/50 transition-all duration-300 text-lg leading-relaxed selection:bg-indigo-500/30 relative z-10 shadow-inner"
             }),
-            React.createElement(motion.button, {
-                whileTap: { scale: 0.98 },
-                disabled: loading || !inputText.trim(),
-                onClick: executeTool,
-                className: "mt-4 py-4 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:brightness-110 transition-all"
-            },
-                loading ? React.createElement(Loader2, { className: "w-5 h-5 animate-spin" }) : React.createElement(Play, { className: "w-4 h-4 fill-current" }),
-                `Initialize ${tool.name.split(' ')[0]}`
+            
+            React.createElement("div", { className: "relative z-10 pt-6" },
+                React.createElement(motion.button, {
+                    whileTap: { scale: 0.97 },
+                    disabled: loading || !inputText.trim(),
+                    onClick: executeTool,
+                    className: "w-full py-5 bg-gradient-to-r from-primary via-indigo-600 to-violet-600 text-white font-black text-sm uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 disabled:opacity-40 shadow-[0_15px_35px_rgba(99,102,241,0.3)] hover:shadow-[0_20px_40px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 transition-all duration-300 group/btn"
+                },
+                    loading ? React.createElement(Loader2, { className: "w-5 h-5 animate-spin" }) : React.createElement(Play, { className: "w-4 h-4 fill-current transition-transform group-hover/btn:scale-125" }),
+                    `INITIATE SEQUENCE`
+                )
             ),
-            error && React.createElement("div", { className: "mt-4 text-xs text-red-400 bg-red-900/20 border border-red-900/50 p-3 rounded-xl text-center" }, error)
+            
+            error && React.createElement(motion.div, { 
+                initial: { opacity: 0, y: 10 },
+                animate: { opacity: 1, y: 0 },
+                className: "mt-4 text-xs text-red-400 bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-center font-bold tracking-wide flex items-center justify-center gap-2" 
+            }, React.createElement("span", { className: "w-2 h-2 rounded-full bg-red-500" }), error)
         ),
 
         /* Output Projection */
-        React.createElement("div", { className: "glass rounded-3xl flex flex-col p-6 bg-white/5 border-indigo-500/10" },
-            React.createElement("div", { className: "flex justify-between items-center mb-4" },
-                React.createElement("div", { className: "text-xs font-bold tracking-widest text-emerald-500 uppercase" }, "Rendered Logic"),
+        React.createElement("div", { className: "glass-card bg-[#0B0F19]/50 backdrop-blur-3xl rounded-[32px] flex flex-col p-8 border border-white/5 shadow-2xl relative overflow-hidden" },
+            React.createElement("div", { className: "absolute -right-32 -top-32 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" }),
+            React.createElement("div", { className: "flex justify-between items-center mb-6 relative z-10" },
+                 React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("div", { className: `w-2 h-2 rounded-full ${outputText ? 'bg-emerald-500 animate-ping' : 'bg-slate-600'}` }),
+                    React.createElement("div", { className: `text-xs font-bold tracking-widest uppercase ${outputText ? 'text-emerald-400' : 'text-slate-500'}` }, "RESOLVED LOGIC")
+                ),
                 outputText && React.createElement("button", { 
-                    onClick: () => navigator.clipboard.writeText(outputText),
-                    className: "text-[10px] bg-white/10 px-2 py-1 rounded hover:bg-white/20 text-white transition-all" 
-                }, "Capture Clone")
+                    onClick: () => {
+                        navigator.clipboard.writeText(outputText);
+                        // Add simple UI toast logic here if needed
+                    },
+                    className: "text-xs font-bold bg-white/5 border border-white/10 px-4 py-2 rounded-full hover:bg-emerald-500 hover:text-white hover:border-emerald-400 text-slate-300 transition-all flex items-center gap-2" 
+                }, React.createElement(Copy, { className: "w-3 h-3" }), "COPY ARTIFACT")
             ),
-            React.createElement("div", { className: "flex-1 bg-black/40 rounded-2xl p-6 font-medium overflow-y-auto text-slate-200 relative leading-relaxed" },
-                loading ? React.createElement("div", { className: "absolute inset-0 flex flex-col items-center justify-center text-primary/60 gap-3" },
-                    React.createElement(Loader2, { className: "w-8 h-8 animate-spin" }),
-                    React.createElement("span", { className: "text-sm font-bold tracking-widest animate-pulse" }, "EXECUTING INFERENCE...")
-                ) : outputText ? React.createElement("div", { className: "whitespace-pre-wrap selection:bg-emerald-500/30" }, outputText) : React.createElement("div", { className: "absolute inset-0 flex items-center justify-center text-slate-700 italic text-sm select-none" }, "Awaiting input vector to resolve matrix output...")
+            
+            React.createElement("div", { className: "flex-1 bg-gradient-to-b from-slate-900/50 to-slate-900/20 rounded-2xl p-8 font-medium overflow-y-auto text-slate-200 relative leading-relaxed shadow-inner border border-white/5" },
+                loading ? React.createElement("div", { className: "absolute inset-0 flex flex-col items-center justify-center gap-4" },
+                    React.createElement("div", { className: "relative" },
+                        React.createElement("div", { className: "w-16 h-16 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" }),
+                        React.createElement("div", { className: "absolute inset-2 rounded-full border-4 border-indigo-500/20 border-b-indigo-500 animate-spin [animation-direction:reverse]" })
+                    ),
+                    React.createElement("span", { className: "text-xs font-black tracking-[0.3em] text-emerald-400 animate-pulse" }, "COMPILING NEURAL DATA")
+                ) : outputText ? React.createElement("div", { className: "whitespace-pre-wrap selection:bg-emerald-500/40 text-lg text-slate-100 animate-fadeIn" }, outputText) 
+                  : React.createElement("div", { className: "absolute inset-0 flex flex-col items-center justify-center text-slate-600 gap-4" }, 
+                        React.createElement(Cpu, { className: "w-12 h-12 opacity-20" }),
+                        React.createElement("div", { className: "italic font-medium tracking-wide" }, "SYSTEM IDLE: Awaiting Command Input")
+                    )
             )
         )
     )
