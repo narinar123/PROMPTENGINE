@@ -4,6 +4,7 @@ import { HeroSection } from "/src/components/HeroSection.js";
 import { WorkflowPlayground } from "/src/components/WorkflowPlayground.js";
 import { SolutionsView, PricingView, DocsView } from "/src/components/DynamicViews.js";
 import { ToolsDirectoryView, SingleToolWorkspace } from "/src/components/ToolMatrix.js";
+import { DesignCodeMasterView } from "/src/components/DesignCodeView.js";
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState("home");
@@ -30,12 +31,7 @@ export default function App() {
       case "workflows":
         return React.createElement("div", { className: "pt-20 bg-[#0c0c0e] min-h-screen" }, React.createElement(WorkflowPlayground));
       default:
-        return React.createElement(React.Fragment, null,
-          React.createElement(HeroSection),
-          React.createElement("section", { className: "relative border-t border-white/5 bg-[#0c0c0e]" },
-            React.createElement(WorkflowPlayground)
-          )
-        );
+        return React.createElement(DesignCodeMasterView, { onAction: () => setCurrentRoute("tools") });
     }
   };
 

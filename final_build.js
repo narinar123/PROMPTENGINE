@@ -9,6 +9,7 @@ const files = [
   'src/components/WorkflowPlayground.js',
   'src/components/DynamicViews.js',
   'src/components/ToolMatrix.js',
+  'src/components/DesignCodeView.js',
   'src/app/page.js'
 ];
 
@@ -26,7 +27,8 @@ import {
   Sparkles, ArrowRight, Shield, Zap, Globe, 
   Terminal, Play, Loader2, CheckCircle2, AlertCircle,
   FileText, Edit, Repeat, CheckCircle, BookOpen, Mail, 
-  MessageSquare, Briefcase, Copy, CheckSquare, Type} from "lucide-react";
+  MessageSquare, Briefcase, Copy, CheckSquare, Type,
+  Database, Code, Layers, Cpu} from "lucide-react";
 
 `;
 
@@ -98,6 +100,9 @@ const html = `<!DOCTYPE html>
         body { background-color: #050505; color: #fff; }
         .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
         .text-gradient { background: linear-gradient(to right, #a5b4fc, #6366f1, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .perspective-1000 { perspective: 1000px; }
     </style>
     <!-- Immediate Global Node Polyfill (Prevents CDN Vendor Crashes) -->
     <script>window.process = { env: { NODE_ENV: 'production' } };</script>
