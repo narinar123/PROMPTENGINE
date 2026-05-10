@@ -25,7 +25,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { 
-  User, Lock, Settings, Key, 
+  User, Lock, Settings, Key, LogIn, LogOut, UserPlus, AlertTriangle, 
   Sparkles, ArrowRight, Shield, Zap, Globe, 
   Terminal, Play, Loader2, CheckCircle2, AlertCircle,
   FileText, Edit, Repeat, CheckCircle, BookOpen, Mail, 
@@ -137,6 +137,8 @@ const html = `<!DOCTYPE html>
       }
     }
     </script>
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div id="root"></div>

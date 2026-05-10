@@ -68,28 +68,43 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // ── API Handler ─────────────────────────────────────────────────────────────
-  if (pathname === '/api/ai' && req.method === 'POST') {
-    let bodyStr = '';
-    req.on('data', chunk => bodyStr += chunk);
-    req.on('end', async () => {
-      try {
-        const parsed = JSON.parse(bodyStr);
-        const response = await callGemini(parsed.prompt || 'Analyze state.');
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, result: response }));
-      } catch (e) {
-        console.error('API Err:', e.message);
-        res.writeHead(e.message.includes('NO_API') ? 401 : 500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: e.message }));
-      }
-    });
-    return;
-  }
+  // ── Universal Serverless API Dispatcher ─────────────────────────────────────
+  if (pathname.startsWith('/api/') && !pathname.endsWith('.js')) {
+      const endpoint = pathname.split('/').pop();
+      const apiPath = path.join(process.cwd(), 'api', `${endpoint}.js`);
+      
+      if (fs.existsSync(apiPath)) {
+          let bodyStr = '';
+          req.on('data', chunk => bodyStr += chunk);
+          req.on('end', async () => {
+              try {
+                  // Dynamic simulation of serverless environment wrapper
+                  const mod = await import(url.pathToFileURL(apiPath).href + `?t=${Date.now()}`);
+                  const handler = mod.default;
 
-  if (pathname === '/api/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ status: 'operational', timestamp: Date.now() }));
+                  // Inject simulated res helper methods (like Vercel/Next.js format)
+                  res.status = (code) => { res.writeHead(code); return res; };
+                  res.json = (obj) => { 
+                      res.setHeader('Content-Type', 'application/json');
+                      res.end(JSON.stringify(obj));
+                  };
+                  req.body = bodyStr ? JSON.parse(bodyStr) : {};
+                  
+                  // Parse simple query params if they aren't available
+                  req.query = parsedUrl.query;
+
+                  await handler(req, res);
+              } catch (e) {
+                  console.error(`[API FAILED] ${endpoint}:`, e.message);
+                  res.writeHead(500, { 'Content-Type': 'application/json' });
+                  res.end(JSON.stringify({ success: false, error: e.message }));
+              }
+          });
+          return;
+      } else {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Endpoint Not Found' }));
+      }
   }
 
   // ── Static File Delivery ────────────────────────────────────────────────────
