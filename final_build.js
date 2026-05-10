@@ -95,12 +95,14 @@ const html = `<!DOCTYPE html>
         .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
         .text-gradient { background: linear-gradient(to right, #a5b4fc, #6366f1, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
+    <!-- Immediate Global Node Polyfill (Prevents CDN Vendor Crashes) -->
+    <script>window.process = { env: { NODE_ENV: 'production' } };</script>
     <!-- Standard CDN Dynamic Import Map -->
     <script type="importmap">
     {
       "imports": {
-        "react": "https://esm.sh/react@18?dev",
-        "react-dom/client": "https://esm.sh/react-dom@18/client?dev",
+        "react": "https://esm.sh/react@18",
+        "react-dom/client": "https://esm.sh/react-dom@18/client",
         "framer-motion": "https://esm.sh/framer-motion@10.16.4",
         "lucide-react": "https://esm.sh/lucide-react@0.294.0"
       }
