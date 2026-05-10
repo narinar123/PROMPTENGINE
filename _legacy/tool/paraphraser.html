@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Paraphraser Tool | GUIDESOFT Clone</title>
+    <link rel="stylesheet" href="../css/premium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .workspace-wrapper {
+            margin-top: 40px;
+        }
+        .tool-controls-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+        }
+        .lang-selector {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--surface-border);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+        input[type=range] {
+            accent-color: var(--primary);
+        }
+        .loader-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 13, 19, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .diff-word {
+            display: inline;
+            cursor: pointer;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+        .diff-changed {
+            background: rgba(163, 230, 53, 0.2);
+            border-bottom: 2px solid #a3e635;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-item">AI Tools</a>
+        <a href="#" class="nav-item">Pricing</a>
+        <a href="#" class="nav-item">Blog</a>
+    </div>
+    <div class="nav-actions">
+        <a href="#" class="btn btn-primary">Login</a>
+    </div>
+</nav>
+
+<div class="app-container">
+    <div style="text-align:center; margin-bottom: 30px;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">AI Paraphraser</h2>
+        <p style="color: var(--text-muted);">Use our advanced rephrasing model to create unique content that retains your meaning.</p>
+    </div>
+
+    <div class="tool-controls-top">
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <span>Mode:</span>
+            <div class="controls-bar" style="margin-bottom: 0; border: 0; padding-bottom: 0;">
+                <button class="mode-tab active" onclick="setMode('standard')">Standard</button>
+                <button class="mode-tab" onclick="setMode('fluency')">Fluency</button>
+                <button class="mode-tab" onclick="setMode('formal')">Formal</button>
+                <button class="mode-tab" onclick="setMode('academic')">Academic</button>
+                <button class="mode-tab" onclick="setMode('creative')">Creative</button>
+            </div>
+        </div>
+        
+        <div class="slider-container">
+            <span>Fewer Synonyms</span>
+            <input type="range" min="1" max="3" value="2" id="synonymLevel">
+            <span>More Synonyms</span>
+        </div>
+    </div>
+
+    <div class="tool-workspace">
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+            <p style="font-weight:600;">Paraphrasing Text...</p>
+        </div>
+
+        <div class="workspace-column col-left">
+            <div style="display:flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.8rem; color:var(--text-muted);">
+                <select class="lang-selector">
+                    <option>English (US)</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                    <option>German</option>
+                </select>
+                <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.7rem;" onclick="pasteText()">Paste Text</button>
+            </div>
+            <textarea class="editor-area" id="inputText" placeholder="Enter or paste your text here to paraphrase..."></textarea>
+            
+            <div class="footer-bar">
+                <div class="stats"><span id="charCount">0</span> characters | <span id="wordCount">0</span> words</div>
+                <button class="btn btn-primary" style="padding: 12px 30px;" id="btnRun" onclick="processParaphrase()">Paraphrase Now</button>
+            </div>
+        </div>
+
+        <div class="workspace-column">
+            <div style="display:flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.8rem; color:var(--text-muted);">
+                <span>Output</span>
+                <div style="display:flex; gap: 10px;">
+                    <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.7rem;" onclick="copyOutput()">Copy</button>
+                    <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.7rem;">Download</button>
+                </div>
+            </div>
+            
+            <div id="outputContainer" class="output-display">
+                <div class="output-placeholder">Generated text will appear here.</div>
+            </div>
+            
+            <div class="footer-bar" style="justify-content: flex-end;">
+                <div class="stats" id="resultStats" style="display:none;">Completed in 0.8s</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Info Sections as cloned from real site -->
+<section class="grid-container" style="margin-top: 60px; padding-top: 60px; border-top: 1px solid var(--surface-border);">
+    <h2 style="text-align:center; font-size:2rem; margin-bottom: 40px;">Transform Your Writing with Smart Rephrasing</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default;">
+            <div class="tool-icon">🎯</div>
+            <h3>25+ Languages</h3>
+            <p>Multilingual support with absolute precision across tone regimes.</p>
+        </div>
+        <div class="tool-card" style="cursor:default;">
+            <div class="tool-icon">⚙️</div>
+            <h3>Smart Modes</h3>
+            <p>Academic, Creative, Formal - Select the right fit for your intent.</p>
+        </div>
+        <div class="tool-card" style="cursor:default;">
+            <div class="tool-icon">📈</div>
+            <h3>Real-time Metrics</h3>
+            <p>Track stats, syllable complexity, and word differences instantly.</p>
+        </div>
+    </div>
+</section>
+
+<script src="../js/api.js"></script>
+<script src="../js/paraphraser.js"></script>
+<script>
+    // Text counter listeners
+    const txt = document.getElementById('inputText');
+    const charC = document.getElementById('charCount');
+    const wordC = document.getElementById('wordCount');
+    
+    txt.addEventListener('input', () => {
+        const val = txt.value;
+        charC.innerText = val.length;
+        wordC.innerText = val.trim() === '' ? 0 : val.trim().split(/\s+/).length;
+    });
+
+    function pasteText() {
+        navigator.clipboard.readText().then(clip => {
+            txt.value = clip;
+            txt.dispatchEvent(new Event('input'));
+        });
+    }
+
+    function copyOutput() {
+        const text = document.getElementById('outputContainer').innerText;
+        navigator.clipboard.writeText(text);
+        alert('Copied to clipboard!');
+    }
+
+    function setMode(mode) {
+        document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        window.currentMode = mode;
+    }
+</script>
+
+</body>
+</html>

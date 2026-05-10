@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Description Generator | GUIDESOFT</title>
+    <meta name="description" content="Generate complete, role-specific job descriptions instantly with our AI-powered job description writer.">
+    <link rel="stylesheet" href="../css/premium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11,13,19,0.7); backdrop-filter: blur(4px);
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 999;
+        }
+        .spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.2rem; }
+        .form-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .form-input, .form-select, .form-textarea {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--surface-border);
+            color: var(--text-main); padding: 10px 14px; border-radius: 10px;
+            font-size: 0.9rem; font-family: inherit; outline: none; transition: 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); }
+        .form-textarea { resize: vertical; min-height: 70px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+        .jd-output {
+            background: rgba(15,17,27,0.9); border: 1px solid var(--surface-border);
+            border-radius: 20px; padding: 2.5rem; margin-top: 2rem; display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .jd-role { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+        .jd-company { color: var(--text-muted); margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--surface-border); }
+        .jd-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+        .jd-badge { background: rgba(93,92,222,0.12); border: 1px solid rgba(93,92,222,0.25); color: #9b9aff; font-size: 0.78rem; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
+        .jd-section { margin-bottom: 1.8rem; }
+        .jd-section h3 { font-size: 1rem; font-weight: 700; color: #9b9aff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+        .jd-section ul { list-style: none; padding: 0; }
+        .jd-section ul li { padding: 5px 0; padding-left: 20px; position: relative; color: var(--text-main); line-height: 1.6; }
+        .jd-section ul li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+        .jd-section p { line-height: 1.8; color: var(--text-main); }
+        .jd-actions { display: flex; gap: 10px; margin-top: 2rem; justify-content: flex-end; border-top: 1px solid var(--surface-border); padding-top: 1.5rem; }
+    </style>
+</head>
+<body>
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <p style="font-weight:600;">Generating Job Description...</p>
+</div>
+
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-item">AI Tools</a>
+        <a href="#" class="nav-item">Pricing</a>
+        <a href="#" class="nav-item">Blog</a>
+    </div>
+    <div class="nav-actions"><a href="#" class="btn btn-primary">Login</a></div>
+</nav>
+
+<div class="app-container" style="max-width: 800px;">
+    <div style="text-align:center; margin-bottom: 40px;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">AI Job Description Generator</h2>
+        <p style="color: var(--text-muted);">Create compelling, complete job postings that attract top talent — instantly.</p>
+    </div>
+
+    <div style="background: rgba(20,22,32,0.7); border: 1px solid var(--surface-border); border-radius: 20px; padding: 2rem; backdrop-filter: blur(20px);">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Job Title</label>
+                <input class="form-input" id="jobTitle" placeholder="e.g. Senior Software Engineer" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Company Name</label>
+                <input class="form-input" id="companyName" placeholder="e.g. TechCorp Inc." />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Department</label>
+                <input class="form-input" id="department" placeholder="e.g. Engineering" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Employment Type</label>
+                <select class="form-select" id="empType">
+                    <option>Full-Time</option>
+                    <option>Part-Time</option>
+                    <option>Contract</option>
+                    <option>Internship</option>
+                    <option>Freelance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Experience Level</label>
+                <select class="form-select" id="expLevel">
+                    <option value="entry">Entry Level (0-2 yrs)</option>
+                    <option value="mid">Mid Level (3-5 yrs)</option>
+                    <option value="senior">Senior (5+ yrs)</option>
+                    <option value="lead">Lead / Principal</option>
+                    <option value="exec">Executive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Work Mode</label>
+                <select class="form-select" id="workMode">
+                    <option>Remote</option>
+                    <option>Hybrid</option>
+                    <option>On-site</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Key Skills / Technologies (optional)</label>
+            <textarea class="form-textarea" id="keySkills" placeholder="e.g. React, Node.js, AWS, Team leadership, Agile..."></textarea>
+        </div>
+        <div style="text-align:center; margin-top: 0.5rem;">
+            <button class="btn btn-primary" style="padding: 14px 50px; font-size: 1rem;" onclick="generateJD()">👔 Generate Job Description</button>
+        </div>
+    </div>
+
+    <div class="jd-output" id="jdOutput">
+        <div class="jd-role" id="outTitle"></div>
+        <div class="jd-company" id="outMeta"></div>
+        <div class="jd-badges" id="outBadges"></div>
+        <div id="outContent"></div>
+        <div class="jd-actions">
+            <button class="btn btn-outline" onclick="generateJD()">🔄 Regenerate</button>
+            <button class="btn btn-primary" onclick="copyJD()">Copy JD</button>
+        </div>
+    </div>
+</div>
+
+<section class="grid-container" style="margin-top: 60px; padding-top: 60px; border-top: 1px solid var(--surface-border);">
+    <h2 style="text-align:center; font-size:2rem; margin-bottom: 40px;">Attract Top Talent Effortlessly</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🚀</div><h3>Post-Ready in Seconds</h3><p>Complete, professional job descriptions ready to publish immediately.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🎯</div><h3>Role-Specific</h3><p>Tailored content for every industry, department, and seniority level.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">⚖️</div><h3>Inclusive Language</h3><p>Bias-free, inclusive phrasing to attract diverse candidate pools.</p></div>
+    </div>
+</section>
+
+<script>
+    const jdData = {
+        entry: {
+            responsibilities: (role, skills) => [
+                `Support the ${role.split(' ').pop()} team with day-to-day operations and project tasks`,
+                `Assist in developing and maintaining ${skills || 'core systems and workflows'}`,
+                `Collaborate with senior team members to learn and implement best practices`,
+                `Participate in code reviews, meetings, and sprint planning sessions`,
+                `Document processes and contribute to knowledge-base articles`
+            ],
+            requirements: (skills) => [
+                `0–2 years of relevant experience or strong internship background`,
+                `Foundational knowledge of ${skills || 'relevant tools and technologies'}`,
+                `Eagerness to learn, adapt, and grow within the team`,
+                `Strong communication and problem-solving skills`,
+                `Bachelor's degree in a related field or equivalent practical experience`
+            ]
+        },
+        mid: {
+            responsibilities: (role, skills) => [
+                `Own and deliver features end-to-end within the ${role} scope`,
+                `Design and implement scalable solutions using ${skills || 'modern best practices'}`,
+                `Mentor junior team members and contribute to technical direction`,
+                `Lead cross-functional discussions and drive deliverables to completion`,
+                `Proactively identify and resolve technical debt and system inefficiencies`
+            ],
+            requirements: (skills) => [
+                `3–5 years of professional experience in a related role`,
+                `Strong proficiency in ${skills || 'relevant technologies and frameworks'}`,
+                `Track record of delivering high-quality work in an agile environment`,
+                `Excellent analytical, communication, and collaboration skills`,
+                `Bachelor's or Master's degree, or equivalent demonstrated experience`
+            ]
+        },
+        senior: {
+            responsibilities: (role, skills) => [
+                `Lead architecture decisions and technical strategy for ${role} initiatives`,
+                `Drive high-impact projects from design to deployment using ${skills || 'advanced tooling'}`,
+                `Set the technical bar through rigorous code reviews and design reviews`,
+                `Partner with product, design, and stakeholders to align on roadmap priorities`,
+                `Champion engineering culture, documentation, and operational excellence`
+            ],
+            requirements: (skills) => [
+                `5+ years of hands-on experience with a strong portfolio of shipped work`,
+                `Deep expertise in ${skills || 'core domain technologies and architectures'}`,
+                `Demonstrated ability to lead technical projects end-to-end`,
+                `Outstanding communication skills for both technical and non-technical audiences`,
+                `Degree in Computer Science or equivalent; advanced degree a plus`
+            ]
+        },
+        lead: {
+            responsibilities: (role, skills) => [
+                `Define technical vision and long-term roadmap for the ${role} function`,
+                `Lead a team of engineers, providing technical mentorship and career growth`,
+                `Drive adoption of ${skills || 'best-in-class tools and engineering standards'}`,
+                `Collaborate with executive leadership to align technology with business objectives`,
+                `Ensure system reliability, scalability, and security across all platforms`
+            ],
+            requirements: (skills) => [
+                `8+ years of progressive experience with at least 3 in a leadership capacity`,
+                `Expert-level knowledge of ${skills || 'relevant stack and infrastructure'}`,
+                `Strong track record of building and scaling high-performing engineering teams`,
+                `Strategic thinker with excellent executive communication skills`,
+                `BS/MS in Computer Science or equivalent field`
+            ]
+        },
+        exec: {
+            responsibilities: (role, skills) => [
+                `Own the overall ${role} strategy and execution at the company level`,
+                `Build, lead, and scale world-class teams across multiple functions`,
+                `Drive organizational alignment on ${skills || 'technology and business goals'}`,
+                `Represent the organization externally with partners, clients, and investors`,
+                `Define OKRs, key metrics, and accountability frameworks across the division`
+            ],
+            requirements: (skills) => [
+                `10+ years of senior leadership experience in a technology organization`,
+                `Proven ability to build and scale teams in ${skills || 'high-growth environments'}`,
+                `Strong board-level communication and stakeholder management skills`,
+                `Visionary mindset with demonstrated execution capabilities`,
+                `MBA or advanced degree strongly preferred`
+            ]
+        }
+    };
+
+    async function generateJD() {
+        const jobTitle = document.getElementById('jobTitle').value.trim();
+        if (!jobTitle) { alert("Please enter a job title."); return; }
+        const company = document.getElementById('companyName').value.trim() || 'Our Company';
+        const dept = document.getElementById('department').value.trim() || 'the team';
+        const empType = document.getElementById('empType').value;
+        const exp = document.getElementById('expLevel').value;
+        const mode = document.getElementById('workMode').value;
+        const skills = document.getElementById('keySkills').value.trim();
+
+        document.getElementById('loader').style.display = 'flex';
+        document.getElementById('jdOutput').style.display = 'none';
+        await new Promise(r => setTimeout(r, 1600));
+
+        const data = jdData[exp];
+        const resp = data.responsibilities(jobTitle, skills);
+        const reqs = data.requirements(skills);
+
+        document.getElementById('outTitle').textContent = jobTitle;
+        document.getElementById('outMeta').innerHTML = `${company} • ${dept}`;
+        document.getElementById('outBadges').innerHTML = [empType, mode, exp.replace('-', ' ').toUpperCase() + ' LEVEL'].map(b => `<span class="jd-badge">${b}</span>`).join('');
+
+        const overview = `${company} is seeking a talented and passionate ${jobTitle} to join our ${dept} team. This is an exciting ${empType.toLowerCase()} opportunity to work ${mode.toLowerCase()} and make a meaningful impact. If you thrive in a fast-paced environment and are passionate about delivering excellence, we'd love to hear from you.`;
+
+        const benefits = [`Competitive compensation and equity package`, `Flexible ${mode.toLowerCase()} work arrangement`, `Health, dental, and vision insurance`, `Professional development budget and learning resources`, `Collaborative, inclusive, and mission-driven culture`];
+
+        document.getElementById('outContent').innerHTML = `
+            <div class="jd-section"><h3>About the Role</h3><p>${overview}</p></div>
+            <div class="jd-section"><h3>Key Responsibilities</h3><ul>${resp.map(r => `<li>${r}</li>`).join('')}</ul></div>
+            <div class="jd-section"><h3>Requirements</h3><ul>${reqs.map(r => `<li>${r}</li>`).join('')}</ul></div>
+            <div class="jd-section"><h3>What We Offer</h3><ul>${benefits.map(b => `<li>${b}</li>`).join('')}</ul></div>
+        `;
+
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('jdOutput').style.display = 'block';
+        document.getElementById('jdOutput').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyJD() {
+        const title = document.getElementById('outTitle').textContent;
+        const content = document.getElementById('outContent').innerText;
+        navigator.clipboard.writeText(`${title}\n\n${content}`);
+        alert('Job description copied!');
+    }
+</script>
+<script src="../js/api.js"></script>
+</body>
+</html>

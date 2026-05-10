@@ -1,0 +1,19 @@
+{
+  "name": "gsprompthero-next",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env app.js",
+    "build": "node final_build.js",
+    "start": "node --env-file=.env app.js"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

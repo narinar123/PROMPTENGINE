@@ -1,0 +1,6 @@
+/* TailWind styling defaults are handled in the HTML shell index.html via CDN for immediate rendering. */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}

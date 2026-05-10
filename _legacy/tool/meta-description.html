@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Meta Description Generator | GUIDESOFT</title>
+    <meta name="description" content="Create SEO-optimized meta descriptions that boost click-through rates and search visibility in seconds.">
+    <link rel="stylesheet" href="../css/premium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.2rem; }
+        .form-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .form-input, .form-select, .form-textarea {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--surface-border);
+            color: var(--text-main); padding: 10px 14px; border-radius: 10px;
+            font-size: 0.9rem; font-family: inherit; outline: none; transition: 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); }
+        .form-textarea { resize: vertical; min-height: 90px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+        .results-section { margin-top: 2rem; display: none; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .serp-preview {
+            background: #fff; border-radius: 12px; padding: 1.5rem 1.5rem;
+            margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .serp-url { color: #1a6c37; font-size: 0.85rem; margin-bottom: 3px; }
+        .serp-title { color: #1a0dab; font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; text-decoration: underline; cursor: pointer; line-height: 1.3; }
+        .serp-desc { color: #4d5156; font-size: 0.9rem; line-height: 1.5; }
+        .meta-variant {
+            background: rgba(20,22,32,0.8); border: 1px solid var(--surface-border);
+            border-radius: 14px; padding: 1.2rem 1.5rem; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+            transition: 0.2s;
+        }
+        .meta-variant:hover { border-color: var(--primary); }
+        .meta-text { flex: 1; line-height: 1.6; font-size: 0.95rem; }
+        .meta-length {
+            font-size: 0.75rem; font-weight: 700; padding: 3px 10px;
+            border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+        }
+        .len-good { background: rgba(163,230,53,0.15); color: #a3e635; }
+        .len-warn { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .len-bad { background: rgba(248,113,113,0.15); color: #f87171; }
+        .char-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .char-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+        .copy-btn { background: none; border: 1px solid var(--surface-border); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: 0.2s; white-space: nowrap; }
+        .copy-btn:hover { border-color: var(--primary); color: #fff; }
+        .seo-tips { background: rgba(93,92,222,0.06); border: 1px solid rgba(93,92,222,0.15); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.5rem; }
+        .seo-tip { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 0.85rem; color: var(--text-muted); }
+        .tip-icon { color: #a3e635; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-item">AI Tools</a>
+        <a href="#" class="nav-item">Pricing</a>
+        <a href="#" class="nav-item">Blog</a>
+    </div>
+    <div class="nav-actions"><a href="#" class="btn btn-primary">Login</a></div>
+</nav>
+
+<div class="app-container" style="max-width: 820px;">
+    <div style="text-align:center; margin-bottom: 40px;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">AI Meta Description Generator</h2>
+        <p style="color: var(--text-muted);">Create click-worthy, SEO-optimized meta descriptions that drive traffic and rank higher.</p>
+    </div>
+
+    <div style="background: rgba(20,22,32,0.7); border: 1px solid var(--surface-border); border-radius: 20px; padding: 2rem; backdrop-filter: blur(20px);">
+        <div class="form-group">
+            <label class="form-label">Page Title</label>
+            <input class="form-input" id="pageTitle" placeholder="e.g. Best AI Writing Tools for Content Creators 2026" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Page Content Description</label>
+            <textarea class="form-textarea" id="pageContent" placeholder="Briefly describe what your page is about and what value it provides to visitors..."></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Target Keyword</label>
+                <input class="form-input" id="keyword" placeholder="e.g. AI writing tools" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Audience / Tone</label>
+                <select class="form-select" id="tone">
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly & Approachable</option>
+                    <option value="urgent">Urgent / Action-Driven</option>
+                    <option value="informative">Informative</option>
+                    <option value="question">Question-Based</option>
+                </select>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top: 0.5rem;">
+            <button class="btn btn-primary" style="padding: 14px 50px; font-size: 1rem;" onclick="generateMeta()" id="btnGen">📈 Generate Meta Descriptions</button>
+        </div>
+    </div>
+
+    <div class="results-section" id="results">
+        <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">🔍 SERP Preview</h3>
+        <div class="serp-preview">
+            <div class="serp-url" id="serpUrl">https://yourwebsite.com/your-page</div>
+            <div class="serp-title" id="serpTitle"></div>
+            <div class="serp-desc" id="serpDesc"></div>
+        </div>
+
+        <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">✨ 3 Generated Variants</h3>
+        <div id="variantsContainer"></div>
+
+        <div class="seo-tips">
+            <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-main);">💡 SEO Best Practices</div>
+            <div class="seo-tip"><span class="tip-icon">●</span> Aim for 150–160 characters for optimal display in search results</div>
+            <div class="seo-tip"><span class="tip-icon">●</span> Include your primary keyword naturally in the first half</div>
+            <div class="seo-tip"><span class="tip-icon">●</span> Use action verbs to drive click-through rates</div>
+            <div class="seo-tip"><span class="tip-icon">●</span> Each page should have a unique meta description</div>
+        </div>
+    </div>
+</div>
+
+<section class="grid-container" style="margin-top: 60px; padding-top: 60px; border-top: 1px solid var(--surface-border);">
+    <h2 style="text-align:center; font-size:2rem; margin-bottom: 40px;">Rank Higher. Get More Clicks.</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🔍</div><h3>SEO-Optimized</h3><p>Built-in keyword placement and character count optimization for Google.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🎯</div><h3>CTR Boosting</h3><p>Compelling language crafted to maximize click-through rates from SERPs.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">⚡</div><h3>3 Variants</h3><p>Get multiple options to A/B test and pick the best performing description.</p></div>
+    </div>
+</section>
+
+<script>
+    function getLenClass(len) {
+        if (len >= 140 && len <= 160) return 'len-good';
+        if (len >= 120 && len < 140) return 'len-warn';
+        return 'len-bad';
+    }
+
+    function getLenLabel(len) {
+        if (len >= 140 && len <= 160) return '✅ Optimal';
+        if (len >= 120 && len < 140) return '⚠️ Short';
+        if (len > 160) return '⚠️ Too Long';
+        return '❌ Too Short';
+    }
+
+    function getFillColor(len) {
+        if (len >= 140 && len <= 160) return '#a3e635';
+        if (len >= 120) return '#f59e0b';
+        return '#f87171';
+    }
+
+    const templates = {
+        professional: [
+            (title, keyword, content) => `Discover ${keyword || title} with our expert-built platform. ${content ? content.split(' ').slice(0, 12).join(' ') + '.' : ''} Trusted by professionals for exceptional results.`,
+            (title, keyword, content) => `Explore comprehensive ${keyword || title} solutions. ${content ? content.split(' ').slice(0, 10).join(' ') + '.' : ''} Designed for accuracy, speed, and reliability.`,
+            (title, keyword, content) => `Optimize your workflow with advanced ${keyword || title} capabilities. Professional-grade tools built for serious results. Start today.`
+        ],
+        friendly: [
+            (title, keyword, content) => `Looking for the best ${keyword || title}? You've found it! ${content ? content.split(' ').slice(0, 10).join(' ') + '.' : ''} Easy, fast, and totally free to try.`,
+            (title, keyword, content) => `We make ${keyword || title} simple and enjoyable. ${content ? content.split(' ').slice(0, 10).join(' ') + '.' : ''} Join thousands of happy users today!`,
+            (title, keyword, content) => `Say hello to smarter ${keyword || title}! Our friendly tools do the heavy lifting so you can focus on what matters most. Give it a go!`
+        ],
+        urgent: [
+            (title, keyword, content) => `Don't miss out — ${keyword || title} just got easier. ${content ? content.split(' ').slice(0, 8).join(' ') + '.' : ''} Act now and transform your results instantly.`,
+            (title, keyword, content) => `Stop struggling with ${keyword || title}. Our solution works faster than you think. ${content ? content.split(' ').slice(0, 8).join(' ') + '.' : ''} Start now!`,
+            (title, keyword, content) => `Time-sensitive: Master ${keyword || title} today. ${content ? content.split(' ').slice(0, 10).join(' ') + '.' : ''} Limited-time access — don't wait.`
+        ],
+        informative: [
+            (title, keyword, content) => `Learn everything about ${keyword || title}. ${content ? content.split(' ').slice(0, 12).join(' ') + '.' : ''} Detailed guides, expert insights, and practical tips included.`,
+            (title, keyword, content) => `Your complete guide to ${keyword || title}. ${content ? content.split(' ').slice(0, 12).join(' ') + '.' : ''} Covering all key concepts from beginner to advanced.`,
+            (title, keyword, content) => `Understand ${keyword || title} with clear, step-by-step explanations. ${content ? content.split(' ').slice(0, 10).join(' ') + '.' : ''} In-depth resources for every level.`
+        ],
+        question: [
+            (title, keyword, content) => `Struggling with ${keyword || title}? Our tool makes it effortless. ${content ? content.split(' ').slice(0, 10).join(' ') + '.' : ''} See results in under a minute.`,
+            (title, keyword, content) => `What if ${keyword || title} was actually easy? It is — with our AI-powered solution. ${content ? content.split(' ').slice(0, 8).join(' ') + '.' : ''} Try it free.`,
+            (title, keyword, content) => `Looking for the best ${keyword || title} tool? Here's why thousands choose us. ${content ? content.split(' ').slice(0, 8).join(' ') + '.' : ''} Find out now.`
+        ]
+    };
+
+    async function generateMeta() {
+        const title = document.getElementById('pageTitle').value.trim();
+        if (!title) { alert("Please enter a page title."); return; }
+        const content = document.getElementById('pageContent').value.trim();
+        const keyword = document.getElementById('keyword').value.trim();
+        const tone = document.getElementById('tone').value;
+
+        const btn = document.getElementById('btnGen');
+        btn.textContent = '⏳ Generating...';
+        btn.disabled = true;
+
+        await new Promise(r => setTimeout(r, 900));
+
+        const variants = templates[tone].map(fn => {
+            let text = fn(title, keyword, content);
+            // Truncate to 160 chars max
+            if (text.length > 160) text = text.substring(0, 157) + '...';
+            return text;
+        });
+
+        document.getElementById('serpTitle').textContent = title;
+        document.getElementById('serpDesc').textContent = variants[0];
+
+        const container = document.getElementById('variantsContainer');
+        container.innerHTML = variants.map((v, i) => {
+            const len = v.length;
+            const fillPct = Math.min(100, (len / 160) * 100);
+            return `
+            <div class="meta-variant">
+                <div style="flex:1;">
+                    <div class="meta-text">${v}</div>
+                    <div class="char-bar"><div class="char-fill" style="width:${fillPct}%; background:${getFillColor(len)};"></div></div>
+                    <div style="color:var(--text-muted); font-size: 0.75rem; margin-top: 4px;">${len} characters</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+                    <span class="meta-length ${getLenClass(len)}">${getLenLabel(len)}</span>
+                    <button class="copy-btn" onclick="copyVariant(${i})">Copy</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        window._variants = variants;
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+        btn.textContent = '📈 Generate Meta Descriptions';
+        btn.disabled = false;
+    }
+
+    function copyVariant(i) {
+        navigator.clipboard.writeText(window._variants[i]);
+        alert('Meta description copied!');
+    }
+</script>
+<script src="../js/api.js"></script>
+</body>
+</html>

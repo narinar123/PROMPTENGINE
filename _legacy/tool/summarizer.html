@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summarizer | GUIDESOFT</title>
+    <meta name="description" content="Summarize articles, documents, and long-form content in seconds using our AI-powered summarizer tool.">
+    <link rel="stylesheet" href="../css/premium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .loader-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11,13,19,0.6); backdrop-filter: blur(4px);
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 10;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .summary-length {
+            display: flex; gap: 8px; margin-bottom: 1rem;
+        }
+        .len-btn {
+            flex: 1; padding: 8px; border: 1px solid var(--surface-border);
+            background: rgba(255,255,255,0.03); border-radius: 8px;
+            color: var(--text-muted); cursor: pointer; font-size: 0.8rem;
+            font-weight: 600; transition: 0.2s; text-align: center;
+        }
+        .len-btn:hover, .len-btn.active {
+            border-color: var(--primary); color: #fff; background: rgba(93,92,222,0.15);
+        }
+        .bullet-point {
+            display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start;
+        }
+        .bullet-dot {
+            width: 8px; height: 8px; background: var(--primary); border-radius: 50%;
+            flex-shrink: 0; margin-top: 7px;
+        }
+        .reduction-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(93,92,222,0.15); border: 1px solid rgba(93,92,222,0.3);
+            color: #9b9aff; font-size: 0.8rem; font-weight: 700;
+            padding: 4px 12px; border-radius: 100px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-item">AI Tools</a>
+        <a href="#" class="nav-item">Pricing</a>
+        <a href="#" class="nav-item">Blog</a>
+    </div>
+    <div class="nav-actions"><a href="#" class="btn btn-primary">Login</a></div>
+</nav>
+
+<div class="app-container">
+    <div style="text-align:center; margin-bottom: 30px;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">AI Summarizer</h2>
+        <p style="color: var(--text-muted);">Distill long articles, research, and conversations into clear, concise summaries.</p>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px;">Summary Length:</p>
+        <div class="summary-length">
+            <div class="len-btn active" onclick="setLen('short', this)">📌 Short</div>
+            <div class="len-btn" onclick="setLen('medium', this)">📄 Medium</div>
+            <div class="len-btn" onclick="setLen('detailed', this)">📚 Detailed</div>
+            <div class="len-btn" onclick="setLen('bullets', this)">• Bullet Points</div>
+        </div>
+    </div>
+
+    <div class="tool-workspace">
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+            <p style="font-weight:600;">Summarizing Content...</p>
+        </div>
+        <div class="workspace-column col-left">
+            <div style="display:flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.8rem; color:var(--text-muted);">
+                <span>Long-Form Content</span>
+                <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.7rem;" onclick="pasteText()">Paste</button>
+            </div>
+            <textarea class="editor-area" id="inputText" placeholder="Paste your article, essay, blog post, or document here..."></textarea>
+            <div class="footer-bar">
+                <div class="stats"><span id="wordCount">0</span> words</div>
+                <button class="btn btn-primary" style="padding: 12px 30px;" onclick="summarize()">Summarize Now</button>
+            </div>
+        </div>
+        <div class="workspace-column">
+            <div style="display:flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.8rem; color:var(--text-muted);">
+                <span>Summary</span>
+                <button class="btn btn-outline" style="padding: 4px 8px; font-size:0.7rem;" onclick="copyOutput()">Copy</button>
+            </div>
+            <div id="outputContainer" class="output-display">
+                <div class="output-placeholder">Your summary will appear here.</div>
+            </div>
+            <div class="footer-bar" style="justify-content: flex-end;">
+                <div class="stats" id="resultStats" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="grid-container" style="margin-top: 60px; padding-top: 60px; border-top: 1px solid var(--surface-border);">
+    <h2 style="text-align:center; font-size:2rem; margin-bottom: 40px;">Save Hours of Reading Time</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">⏱️</div><h3>90% Time Saved</h3><p>Understand the key points of any document in seconds.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🎯</div><h3>Key Insights</h3><p>Extract the most important ideas and conclusions automatically.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">📝</div><h3>Multiple Formats</h3><p>Get bullet points, short overviews, or detailed summaries.</p></div>
+    </div>
+</section>
+
+<script>
+    let summaryLen = 'short';
+    const txt = document.getElementById('inputText');
+    txt.addEventListener('input', () => {
+        document.getElementById('wordCount').innerText = txt.value.trim() === '' ? 0 : txt.value.trim().split(/\s+/).length;
+    });
+
+    function setLen(l, el) {
+        summaryLen = l;
+        document.querySelectorAll('.len-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function pasteText() {
+        navigator.clipboard.readText().then(clip => { txt.value = clip; txt.dispatchEvent(new Event('input')); });
+    }
+
+    function copyOutput() {
+        navigator.clipboard.writeText(document.getElementById('outputContainer').innerText);
+        alert('Copied!');
+    }
+
+    async function summarize() {
+        const text = txt.value.trim();
+        if (!text) { alert("Please enter some text to summarize."); return; }
+        document.getElementById('loader').style.display = 'flex';
+        const totalWords = text.split(/\s+/).length;
+        
+        try {
+            const endpoint = summaryLen === 'bullets' ? 'summarizer_bullets' : 'summarizer';
+            const res = await window.gsApi.call(endpoint, text, { 
+                style: summaryLen === 'bullets' ? 'bullets' : 'paragraph',
+                length: summaryLen 
+            });
+            
+            document.getElementById('loader').style.display = 'none';
+            let output = '';
+            
+            if (summaryLen === 'bullets' && Array.isArray(res.result)) {
+                output = res.result.map(s => `<div class="bullet-point"><div class="bullet-dot"></div><span>${s}</span></div>`).join('');
+            } else if (typeof res.result === 'string' && summaryLen === 'bullets') {
+                // Fallback if it's one big string
+                const lines = res.result.split('\n').filter(l => l.trim().length > 0);
+                output = lines.map(l => `<div class="bullet-point"><div class="bullet-dot"></div><span>${l.replace(/^[\*-•]\s*/, '')}</span></div>`).join('');
+            } else {
+                output = `<div style="line-height:1.8;white-space:pre-wrap;">${res.result}</div>`;
+            }
+            
+            document.getElementById('outputContainer').innerHTML = output;
+            const outWords = document.getElementById('outputContainer').innerText.trim().split(/\s+/).length;
+            const reduction = Math.round((1 - outWords / totalWords) * 100);
+            const stats = document.getElementById('resultStats');
+            stats.innerHTML = `<span class="reduction-tag">↓ ${Math.max(0, reduction)}% reduction</span>&nbsp; ${totalWords} → ${outWords} words`;
+            stats.style.display = 'block';
+            
+        } catch (e) {
+            document.getElementById('loader').style.display = 'none';
+            alert("AI connection failed: " + e.message);
+        }
+    }
+</script>
+<script src="../js/api.js"></script>
+</body>
+</html>

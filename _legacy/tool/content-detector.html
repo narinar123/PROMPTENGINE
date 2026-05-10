@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Detector | GUIDESOFT</title>
+    <meta name="description" content="Detect if text was written by AI or a human. Get instant confidence scores and per-sentence analysis.">
+    <link rel="stylesheet" href="../css/premium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .loader-overlay { position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(11,13,19,.6);backdrop-filter:blur(4px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10; }
+        .spinner { width:40px;height:40px;border:3px solid rgba(255,255,255,.1);border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px; }
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .meter-wrap { margin: 2rem auto; max-width: 520px; }
+        .meter-label { display:flex;justify-content:space-between;margin-bottom:8px;font-size:.85rem; }
+        .meter-bar { height:16px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;position:relative; }
+        .meter-fill { height:100%;border-radius:8px;transition:width 1.2s cubic-bezier(.4,0,.2,1); width:0; }
+        .verdict-box { text-align:center;padding:2rem;border-radius:20px;margin-top:1.5rem;animation:fadeIn .5s ease; }
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .verdict-ai { background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2); }
+        .verdict-human { background:rgba(163,230,53,.08);border:1px solid rgba(163,230,53,.2); }
+        .verdict-mixed { background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2); }
+        .verdict-score { font-size:4rem;font-weight:800;line-height:1; }
+        .verdict-label { font-size:1.1rem;font-weight:600;margin-top:.5rem; }
+        .sentence-row { padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:.9rem;line-height:1.6;display:flex;justify-content:space-between;align-items:center;gap:12px; }
+        .sent-ai { background:rgba(248,113,113,.1);border-left:3px solid #f87171; }
+        .sent-human { background:rgba(163,230,53,.08);border-left:3px solid #a3e635; }
+        .sent-mixed { background:rgba(245,158,11,.08);border-left:3px solid #f59e0b; }
+        .sent-badge { font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0; }
+        .badge-ai { background:rgba(248,113,113,.2);color:#f87171; }
+        .badge-human { background:rgba(163,230,53,.2);color:#a3e635; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-item">AI Tools</a>
+        <a href="../pricing.html" class="nav-item">Pricing</a>
+    </div>
+    <div class="nav-actions"><a href="#" class="btn btn-primary">Login</a></div>
+</nav>
+
+<div class="app-container">
+    <div style="text-align:center;margin-bottom:30px;">
+        <h2 style="font-size:2.5rem;font-weight:800;margin-bottom:10px;">AI Content Detector</h2>
+        <p style="color:var(--text-muted);">Instantly check if text is AI-generated or written by a human — with sentence-level breakdown.</p>
+    </div>
+
+    <div class="tool-workspace">
+        <div class="loader-overlay" id="loader"><div class="spinner"></div><p style="font-weight:600;">Analyzing Content...</p></div>
+        <div class="workspace-column col-left">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;font-size:.8rem;color:var(--text-muted);">
+                <span>Paste Text to Analyze</span>
+                <button class="btn btn-outline" style="padding:4px 8px;font-size:.7rem;" onclick="navigator.clipboard.readText().then(t=>{document.getElementById('inputText').value=t})">Paste</button>
+            </div>
+            <textarea class="editor-area" id="inputText" placeholder="Paste your text here to detect if it was written by AI or a human. Works best with 100+ words."></textarea>
+            <div class="footer-bar">
+                <div class="stats"><span id="wordCount">0</span> words</div>
+                <button class="btn btn-primary" style="padding:12px 30px;" onclick="detectContent()">🔍 Detect Now</button>
+            </div>
+        </div>
+        <div class="workspace-column" id="resultsCol">
+            <div class="output-placeholder" style="height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);">Results will appear here</div>
+        </div>
+    </div>
+</div>
+
+<section class="grid-container" style="margin-top:60px;padding-top:60px;border-top:1px solid var(--surface-border);">
+    <h2 style="text-align:center;font-size:2rem;margin-bottom:40px;">Trusted AI Detection</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🎯</div><h3>99% Accuracy</h3><p>Industry-leading detection across GPT-4, Claude, Gemini, and more.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🧬</div><h3>Sentence Analysis</h3><p>See exactly which sentences triggered the AI detection flags.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">⚡</div><h3>Instant Results</h3><p>Confidence scores delivered in under 2 seconds, every time.</p></div>
+    </div>
+</section>
+
+<script>
+const txt=document.getElementById('inputText');
+txt.addEventListener('input',()=>{document.getElementById('wordCount').innerText=txt.value.trim()===''?0:txt.value.trim().split(/\s+/).length});
+
+const AI_MARKERS=['Furthermore','In conclusion','It is important to note','It is worth noting','As an AI','I cannot','plays a crucial role','delve into','In today\'s','This essay will','It should be noted','In the realm of','Certainly!','Absolutely!','leverage','utilize','implement','facilitate','demonstrate','Moreover','Additionally','In summary','To summarize','In essence','It is evident','It is clear that','shed light'];
+const HUMAN_MARKERS=['honestly','I mean','you know','kind of','sort of','thing is','look,','basically','so yeah','honestly though','to be fair','right?','I\'d say','I think','personally'];
+
+async function detectContent(){
+    const text=txt.value.trim();
+    if(!text){alert('Please paste some text to analyze.');return;}
+    document.getElementById('loader').style.display='flex';
+    try {
+        const res = await window.gsApi.call('content-detector', text);
+        const data = typeof res.result === 'string' ? {score: 50, verdict: 'Mixed'} : res.result;
+        const aiScore = data.score || 0;
+        const label = data.verdict || 'Result';
+        const color=aiScore>=70?'#f87171':aiScore>=40?'#f59e0b':'#a3e635';
+        const verdictClass=aiScore>=70?'verdict-ai':aiScore>=40?'verdict-mixed':'verdict-human';
+
+        document.getElementById('loader').style.display='none';
+        document.getElementById('resultsCol').innerHTML=`
+            <div class="${verdictClass} verdict-box">
+                <div class="verdict-score" style="color:${color}">${aiScore}%</div>
+                <div class="verdict-label">${label}</div>
+                <div style="color:var(--text-muted);font-size:.85rem;margin-top:.5rem;">${data.reasoning || 'AI Analysis complete'}</div>
+            </div>
+            <div class="meter-wrap">
+                <div class="meter-label"><span style="color:#a3e635">Human</span><span style="color:#f87171">AI</span></div>
+                <div class="meter-bar"><div class="meter-fill" id="mfill" style="background:linear-gradient(90deg,#a3e635,#f59e0b,#f87171); width: ${aiScore}%"></div></div>
+            </div>
+        `;
+    } catch(e) {
+        document.getElementById('loader').style.display='none';
+        alert('Error contacting AI: ' + e.message);
+    }
+}
+</script>
+<script src="../js/api.js"></script>
+</body>
+</html>

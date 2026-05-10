@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter Generator | GUIDESOFT</title>
+    <meta name="description" content="Generate a compelling, personalized cover letter for any job application in seconds.">
+    <link rel="stylesheet" href="../css/premium.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:1.2rem}
+        .form-label{font-size:.8rem;color:var(--text-muted);font-weight:600}
+        .form-input,.form-select,.form-textarea{background:rgba(255,255,255,.04);border:1px solid var(--surface-border);color:var(--text-main);padding:10px 14px;border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;transition:.2s}
+        .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary)}
+        .form-textarea{resize:vertical;min-height:90px}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        @media(max-width:768px){.form-row{grid-template-columns:1fr}}
+        .letter-output{background:rgba(15,17,27,.9);border:1px solid var(--surface-border);border-radius:20px;padding:3rem;margin-top:2rem;display:none;animation:fadeIn .5s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .letter-body{font-size:1rem;line-height:2;white-space:pre-wrap;color:var(--text-main)}
+        .letter-actions{display:flex;gap:10px;margin-top:2rem;justify-content:flex-end;border-top:1px solid var(--surface-border);padding-top:1.5rem}
+        .loader-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,13,19,.7);backdrop-filter:blur(4px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+        .spinner{width:48px;height:48px;border:3px solid rgba(255,255,255,.1);border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+    </style>
+</head>
+<body>
+<div class="loader-overlay" id="loader"><div class="spinner"></div><p style="font-weight:600">Writing Your Cover Letter...</p></div>
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links"><a href="../index.html" class="nav-item">AI Tools</a><a href="../pricing.html" class="nav-item">Pricing</a></div>
+    <div class="nav-actions"><a href="#" class="btn btn-primary">Login</a></div>
+</nav>
+
+<div class="app-container" style="max-width:800px">
+    <div style="text-align:center;margin-bottom:40px">
+        <h2 style="font-size:2.5rem;font-weight:800;margin-bottom:10px">Cover Letter Generator</h2>
+        <p style="color:var(--text-muted)">Write a tailored, professional cover letter that gets you noticed — in seconds.</p>
+    </div>
+    <div style="background:rgba(20,22,32,.7);border:1px solid var(--surface-border);border-radius:20px;padding:2rem;backdrop-filter:blur(20px)">
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="yourName" placeholder="e.g. Alex Johnson"/></div>
+            <div class="form-group"><label class="form-label">Job Title Applying For</label><input class="form-input" id="jobTitle" placeholder="e.g. Senior Marketing Manager"/></div>
+            <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" id="companyName" placeholder="e.g. Stripe"/></div>
+            <div class="form-group"><label class="form-label">Tone</label><select class="form-select" id="tone"><option value="professional">Professional</option><option value="enthusiastic">Enthusiastic</option><option value="concise">Concise</option><option value="story">Story-driven</option></select></div>
+        </div>
+        <div class="form-group"><label class="form-label">Your Key Skills / Experience</label><textarea class="form-textarea" id="skills" placeholder="e.g. 5 years in digital marketing, led campaigns generating $2M revenue, expert in SEO..."></textarea></div>
+        <div class="form-group"><label class="form-label">Why This Company? (optional)</label><textarea class="form-textarea" id="whyCompany" placeholder="e.g. I admire their mission and culture of rigorous thinking..."></textarea></div>
+        <div style="text-align:center;margin-top:.5rem"><button class="btn btn-primary" style="padding:14px 50px;font-size:1rem" onclick="gen()">📃 Generate Cover Letter</button></div>
+    </div>
+    <div class="letter-output" id="out">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem">
+            <h3 style="font-size:1.1rem;font-weight:700">Your Cover Letter</h3>
+            <span id="meta" style="color:var(--text-muted);font-size:.8rem"></span>
+        </div>
+        <div class="letter-body" id="body"></div>
+        <div class="letter-actions">
+            <button class="btn btn-outline" onclick="gen()">🔄 Regenerate</button>
+            <button class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('body').textContent).then(()=>alert('Copied!'))">Copy Letter</button>
+        </div>
+    </div>
+</div>
+
+<section class="grid-container" style="margin-top:60px;padding-top:60px;border-top:1px solid var(--surface-border)">
+    <h2 style="text-align:center;font-size:2rem;margin-bottom:40px">Land More Interviews</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default"><div class="tool-icon">🎯</div><h3>Tailored to the Role</h3><p>Every letter is customized to the specific job and company.</p></div>
+        <div class="tool-card" style="cursor:default"><div class="tool-icon">✨</div><h3>ATS-Friendly</h3><p>Structured to pass applicant tracking systems every time.</p></div>
+        <div class="tool-card" style="cursor:default"><div class="tool-icon">⚡</div><h3>30 Seconds Flat</h3><p>From blank page to polished letter faster than any human writer.</p></div>
+    </div>
+</section>
+
+<script>
+function build(tone,name,job,company,skills,why){
+    const n=name||'Your Name',j=job,c=company,s=skills,w=why;
+    if(tone==='concise') return `Dear Hiring Manager,\n\nI'm applying for the ${j} role at ${c}. ${s||'My skills align directly with this position.'}\n\n${w||'Your team\'s work stands out to me, and I\'d love to contribute meaningfully from day one.'}\n\nI'd welcome a conversation. Thank you.\n\n${n}`;
+    if(tone==='enthusiastic') return `Dear Hiring Team,\n\nI was thrilled to find the ${j} opening at ${c} — it feels like the perfect next step!\n\nMy background includes ${s||'a strong foundation of relevant skills'}, and I've been looking for exactly this kind of opportunity. What draws me to ${c} specifically is ${w||'the company\'s bold approach and incredible team culture'}.\n\nI don't just want a job — I want to make an impact, and I believe ${c} is the right stage for that.\n\nThank you so much for your time!\n\nEnthusiastically,\n${n}`;
+    if(tone==='story') return `Dear Hiring Manager,\n\nA few years ago, I made a decision that changed my career: I stopped chasing titles and started chasing impact. That choice led me here — to the ${j} role at ${c}.\n\nSince then, I've built a body of work I'm genuinely proud of: ${s||'delivering results across complex, high-stakes projects'}. Every challenge taught me something new.\n\nThat's why ${c} caught my attention. ${w||'What you\'re building is rare — ambition backed by real execution.'}. I want to be part of that story.\n\nWarmly,\n${n}`;
+    return `Dear Hiring Manager,\n\nI am writing to express my strong interest in the ${j} position at ${c}. With ${s||'my background and relevant experience'}, I am confident I can make a meaningful contribution to your team.\n\n${w||'I have long admired '+c+' and believe my skills align closely with what you are looking for.'}.\n\nI would welcome the chance to discuss how I can contribute. Thank you for considering my application.\n\nSincerely,\n${n}`;
+}
+
+async function gen(){
+    const job=document.getElementById('jobTitle').value.trim();
+    if(!job){alert('Please enter a job title.');return;}
+    document.getElementById('loader').style.display='flex';
+    const opts = {
+        name: document.getElementById('yourName').value.trim(),
+        job: job,
+        company: document.getElementById('companyName').value.trim() || 'the company',
+        tone: document.getElementById('tone').value
+    };
+    const skills = document.getElementById('skills').value.trim();
+    try {
+        const res = await window.gsApi.call('cover-letter', skills, opts);
+        document.getElementById('loader').style.display='none';
+        document.getElementById('body').textContent=res.result;
+        document.getElementById('meta').textContent=res.result.trim().split(/\s+/).length+' words';
+        document.getElementById('out').style.display='block';
+        document.getElementById('out').scrollIntoView({behavior:'smooth'});
+    } catch (e) {
+        document.getElementById('loader').style.display='none';
+        alert(e.message);
+    }
+}
+</script>
+<script src="../js/api.js"></script>
+</body>
+</html>

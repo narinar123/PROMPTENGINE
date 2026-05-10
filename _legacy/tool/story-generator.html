@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Story Generator | GUIDESOFT</title>
+    <meta name="description" content="Generate imaginative story plots, characters, and narratives from a simple prompt with our AI story generator.">
+    <link rel="stylesheet" href="../css/premium.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11,13,19,0.8); backdrop-filter: blur(6px);
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 999;
+        }
+        .spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #e94e77; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.2rem; }
+        .form-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .form-input, .form-select, .form-textarea {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--surface-border);
+            color: var(--text-main); padding: 10px 14px; border-radius: 10px;
+            font-size: 0.9rem; font-family: inherit; outline: none; transition: 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #e94e77; }
+        .form-textarea { resize: vertical; min-height: 90px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+        .story-output {
+            background: rgba(15,17,27,0.95); border: 1px solid rgba(233,78,119,0.15);
+            border-radius: 20px; padding: 3rem; margin-top: 2rem; display: none;
+            animation: fadeIn 0.5s ease; position: relative; overflow: hidden;
+        }
+        .story-output::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(233,78,119,0.05), transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .story-genre { display: inline-block; background: rgba(233,78,119,0.12); border: 1px solid rgba(233,78,119,0.25); color: #e94e77; font-size: 0.78rem; font-weight: 700; padding: 4px 14px; border-radius: 100px; margin-bottom: 1rem; }
+        .story-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff, #e94e77); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .story-tagline { color: var(--text-muted); font-style: italic; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--surface-border); }
+        .story-section { margin-bottom: 1.8rem; }
+        .story-section h3 { font-size: 0.85rem; font-weight: 700; color: #e94e77; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.8rem; }
+        .story-section p { line-height: 1.9; color: var(--text-main); font-size: 1rem; }
+        .story-section ul { list-style: none; padding: 0; }
+        .story-section ul li { padding: 6px 0; padding-left: 18px; position: relative; line-height: 1.6; }
+        .story-section ul li::before { content: "✦"; position: absolute; left: 0; color: #e94e77; font-size: 0.6rem; top: 10px; }
+        .char-card { display: flex; flex-direction: column; gap: 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 1rem; margin-bottom: 10px; }
+        .char-name { font-weight: 700; color: #fff; }
+        .char-role { color: #e94e77; font-size: 0.8rem; font-weight: 600; }
+        .char-desc { color: var(--text-muted); font-size: 0.875rem; line-height: 1.5; }
+        .story-actions { display: flex; gap: 10px; margin-top: 2rem; justify-content: flex-end; border-top: 1px solid var(--surface-border); padding-top: 1.5rem; }
+    </style>
+</head>
+<body>
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <p style="font-weight:600; font-size: 1.1rem;">Crafting Your Story...</p>
+    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px;">Building characters and plot...</p>
+</div>
+
+<nav class="navbar">
+    <a href="../index.html" class="logo">
+        <img src="https://www.gsgroups.net/gslogo.png" alt="Logo" style="height:32px; width:auto; object-fit:contain;">
+        <span>GUIDESOFT</span>
+    </a>
+    <div class="nav-links">
+        <a href="../index.html" class="nav-item">AI Tools</a>
+        <a href="#" class="nav-item">Pricing</a>
+        <a href="#" class="nav-item">Blog</a>
+    </div>
+    <div class="nav-actions"><a href="#" class="btn btn-primary">Login</a></div>
+</nav>
+
+<div class="app-container" style="max-width: 800px;">
+    <div style="text-align:center; margin-bottom: 40px;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">AI Story Generator</h2>
+        <p style="color: var(--text-muted);">Transform a simple idea into a rich, complete story with compelling characters and plot twists.</p>
+    </div>
+
+    <div style="background: rgba(20,22,32,0.7); border: 1px solid var(--surface-border); border-radius: 20px; padding: 2rem; backdrop-filter: blur(20px);">
+        <div class="form-group">
+            <label class="form-label">Story Prompt or Idea</label>
+            <textarea class="form-textarea" id="storyPrompt" placeholder="e.g. A lonely astronaut discovers an alien artifact on Mars that starts sending signals back to Earth..."></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Genre</label>
+                <select class="form-select" id="genre">
+                    <option value="scifi">Sci-Fi</option>
+                    <option value="fantasy">Fantasy</option>
+                    <option value="thriller">Thriller</option>
+                    <option value="romance">Romance</option>
+                    <option value="mystery">Mystery</option>
+                    <option value="horror">Horror</option>
+                    <option value="adventure">Adventure</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Story Length</label>
+                <select class="form-select" id="storyLen">
+                    <option value="flash">Flash (micro)</option>
+                    <option value="short" selected>Short Story</option>
+                    <option value="chapter">Opening Chapter</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Protagonist Type</label>
+                <select class="form-select" id="protagonist">
+                    <option>Anti-Hero</option>
+                    <option>Classic Hero</option>
+                    <option>Reluctant Hero</option>
+                    <option>Villain Protagonist</option>
+                    <option>Everyman</option>
+                </select>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top: 0.5rem;">
+            <button class="btn btn-primary" style="padding: 14px 50px; font-size: 1rem; background: linear-gradient(135deg, #e94e77, #9b1742);" onclick="generateStory()">✨ Generate Story</button>
+        </div>
+    </div>
+
+    <div class="story-output" id="storyOutput">
+        <span class="story-genre" id="outGenre"></span>
+        <div class="story-title" id="outTitle"></div>
+        <div class="story-tagline" id="outTagline"></div>
+        <div id="outContent"></div>
+        <div class="story-actions">
+            <button class="btn btn-outline" onclick="generateStory()">🔄 New Story</button>
+            <button class="btn btn-primary" style="background: linear-gradient(135deg, #e94e77, #9b1742);" onclick="copyStory()">Copy Story</button>
+        </div>
+    </div>
+</div>
+
+<section class="grid-container" style="margin-top: 60px; padding-top: 60px; border-top: 1px solid var(--surface-border);">
+    <h2 style="text-align:center; font-size:2rem; margin-bottom: 40px;">Unleash Your Imagination</h2>
+    <div class="tools-grid">
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🌌</div><h3>7+ Genres</h3><p>From dark thrillers to epic fantasy — every genre expertly handled.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">👥</div><h3>Rich Characters</h3><p>Fully realized protagonists, antagonists, and supporting cast.</p></div>
+        <div class="tool-card" style="cursor:default;"><div class="tool-icon">🌀</div><h3>Plot Twists</h3><p>Unexpected, compelling twists that keep readers hooked to the end.</p></div>
+    </div>
+</section>
+
+<script>
+    const genreData = {
+        scifi: { label: 'SCI-FI', titles: ['The Last Signal', 'Beyond the Event Horizon', 'Echoes of the Void', 'The Synthetic Mind'], taglines: ['The universe held one more secret — and finding it would cost everything.', 'Some discoveries cannot be undiscovered.', 'Among a billion stars, only one carried a warning.'] },
+        fantasy: { label: 'FANTASY', titles: ['The Shattered Crown', 'Embers of the Old World', 'The Forgotten Throne', 'Children of the Storm'], taglines: ['Magic is not power. It is a debt.', 'Every legend begins with someone who refused to give up.', 'The ancient evil had one name — and one weakness.'] },
+        thriller: { label: 'THRILLER', titles: ['The Silent Witness', 'No Exit Protocol', 'Before She Disappears', 'The Seventh Floor'], taglines: ['She knew too much. Now she had 48 hours.', 'The truth was buried. He was about to dig.', 'Trust no one. Especially yourself.'] },
+        romance: { label: 'ROMANCE', titles: ['One More Chance', 'The Space Between Us', 'Written in Rain', 'After Everything'], taglines: ['They met at the wrong time — and fell in love anyway.', 'Sometimes love arrives in the form of a second chance.', 'She said she\'d never trust again. He was worth the risk.'] },
+        mystery: { label: 'MYSTERY', titles: ['The Missing Variable', 'Room 214', 'The Clockmaker\'s Lie', 'No Body, No Case'], taglines: ['The body was gone. The truth was worse.', 'Everyone in town had a reason — only one had done it.', 'He solved puzzles for a living. This one might kill him.'] },
+        horror: { label: 'HORROR', titles: ['What Sleeps Beneath', 'The Hollow', 'Don\'t Look Back', 'The Visitor'], taglines: ['It didn\'t want to kill her. It wanted her to stay.', 'The house had been empty for thirty years — or so they thought.', 'Some doors should never be opened.'] },
+        adventure: { label: 'ADVENTURE', titles: ['The Last Expedition', 'Edge of the Known World', 'Into the Wilds', 'The Buried Map'], taglines: ['The treasure wasn\'t the destination. Survival was.', 'They set out for glory. What they found changed history.', 'The world beyond the map was more real than anything they knew.'] }
+    };
+
+    const plots = {
+        flash: (prompt, genre) => ({
+            opening: `The moment it happened, there was no going back. ${prompt || 'An ordinary day turned extraordinary when the impossible became real.'} The world shifted in an instant — and with it, everything that had been certain dissolved like smoke.`,
+            twist: `But nothing was as it seemed. The revelation arrived not with a roar, but a whisper — changing the meaning of every moment that had come before. In the silence that followed, one truth remained: the only way forward was through.`,
+            ending: `And so she stepped into the unknown — carrying nothing but the memory of what had been, and the quiet, fierce hope of what could still be.`
+        }),
+        short: (prompt, genre) => ({
+            opening: `It began, as most extraordinary things do, with something ordinary. ${prompt || 'An unexpected event set off a chain of consequences no one had anticipated.'} Nobody had seen it coming — not even those who thought they were watching. The signs had all been there, hidden in plain sight, waiting for the right eyes.`,
+            development: `Days passed. Then weeks. Each one layered new complications onto what had already seemed impossible. The protagonist — sharp-minded, quietly determined, and carrying wounds only she could see — began to understand that the problem ran deeper than the surface. It always did. The closer she looked, the more the edges of reality seemed to soften and blur.`,
+            twist: `Then came the twist that reordered everything. What she had trusted had betrayed her. What she had feared became her only ally. The revelation hit like cold water — clarifying, shocking, undeniable. Everything had to be reexamined. Every assumption dismantled and rebuilt from scratch.`,
+            ending: `In the end, she didn't win in the way she'd imagined. But she won in the way that mattered — with her sense of self intact, with clarity where there had been confusion, and with a story worth carrying forward. Not every ending is a resolution. Some are doorways.`
+        }),
+        chapter: (prompt, genre) => ({
+            opening: `Chapter 1: The Beginning\n\nNobody talks about how silence has texture. That's what she noticed first — the way the quiet in the room wasn't empty, but full. Full of held breath. Full of everything that hadn't been said yet.\n\n${prompt || 'The event that changed everything started without warning — as the most important ones always do.'} She hadn't been prepared. Nobody had. But then, preparation is just another word for the illusion of control.`,
+            development: `The first twenty-four hours were chaos dressed as order. Everyone around her moved with purpose — making calls, sending messages, issuing instructions that meant nothing and everything simultaneously. She moved too, because standing still felt like surrender. \n\nShe thought about all the decisions that had led to this moment — the small ones, mostly. The ones that seemed insignificant in the moment. She was beginning to understand that the insignificant choices are the ones that matter most. They accumulate quietly, without fanfare, and then one day you look up and realize they've built an entire architecture of consequence around you.`,
+            twist: `It was on the third day that she found it. The thing that should not have been there. The thing that changed the shape of everything she thought she knew.\n\nShe stared at it for a long moment, turning it over in her mind the way you turn a stone in your hand — feeling for edges, for weight, for what it might conceal. And then, slowly, the full meaning arrived.\n\nEverything she had been told was a frame. And she had been carefully, expertly, placed inside it.`,
+            ending: `She closed her eyes. Breathed. Opened them again.\n\nThe story was just beginning — and this time, she would be the one to write it.\n\n[End of Chapter 1]`
+        })
+    };
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    async function generateStory() {
+        const prompt = document.getElementById('storyPrompt').value.trim();
+        const genre = document.getElementById('genre').value;
+        const len = document.getElementById('storyLen').value;
+        const protagonist = document.getElementById('protagonist').value;
+
+        document.getElementById('loader').style.display = 'flex';
+        document.getElementById('storyOutput').style.display = 'none';
+        await new Promise(r => setTimeout(r, 2200));
+
+        const gd = genreData[genre];
+        const title = pick(gd.titles);
+        const tagline = pick(gd.taglines);
+        const story = plots[len](prompt, genre);
+
+        document.getElementById('outGenre').textContent = gd.label;
+        document.getElementById('outTitle').textContent = title;
+        document.getElementById('outTagline').textContent = `"${tagline}"`;
+
+        const characters = [
+            { name: 'Protagonist', role: protagonist, desc: `A deeply complex individual shaped by a difficult past. Their greatest strength is also their greatest vulnerability — and the story tests both relentlessly.` },
+            { name: 'The Antagonist', role: 'Opposing Force', desc: `Not evil for the sake of evil. They have a reason — a wound, a belief, a goal. That's what makes them dangerous.` },
+            { name: 'The Ally', role: 'Unlikely Companion', desc: `Met at exactly the wrong moment. But their timing turns out to be perfect. They see things the protagonist can't.` }
+        ];
+
+        const sections = Object.entries(story).map(([key, val]) => {
+            const label = key === 'opening' ? 'Opening' : key === 'development' ? 'Rising Action' : key === 'twist' ? 'The Turn' : 'Resolution';
+            return `<div class="story-section"><h3>${label}</h3><p>${val.replace(/\n\n/g, '</p><p style="margin-top:1rem;">').replace(/\n/g, '<br>')}</p></div>`;
+        }).join('');
+
+        const charHTML = characters.map(c => `
+            <div class="char-card">
+                <span class="char-name">${c.name}</span>
+                <span class="char-role">${c.role}</span>
+                <span class="char-desc">${c.desc}</span>
+            </div>`).join('');
+
+        document.getElementById('outContent').innerHTML = `
+            ${sections}
+            <div class="story-section"><h3>Characters</h3>${charHTML}</div>
+        `;
+
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('storyOutput').style.display = 'block';
+        document.getElementById('storyOutput').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyStory() {
+        const title = document.getElementById('outTitle').textContent;
+        const content = document.getElementById('outContent').innerText;
+        navigator.clipboard.writeText(`${title}\n\n${content}`);
+        alert('Story copied!');
+    }
+</script>
+<script src="../js/api.js"></script>
+</body>
+</html>
