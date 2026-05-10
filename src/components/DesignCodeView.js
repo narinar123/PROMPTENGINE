@@ -1,204 +1,236 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Play, Sparkles, Shield, Zap, Globe, ArrowRight,
-  Cpu, Database, Code, Layers, Terminal, Lock
+  Cpu, Database, Code, Layers, Terminal, Lock, Star, Check, Mail
 } from "lucide-react";
 
-// -------------------------------------------------------------------
-// 1. Background Canvas Simulator (The Famous Animated Spline/Mesh Look)
-// -------------------------------------------------------------------
-export const DesignCodeBg = () => {
-  return React.createElement("div", { className: "fixed inset-0 -z-10 overflow-hidden bg-[#1F1F47]" },
-    // Base dynamic noise/mesh pattern
-    React.createElement("div", { 
-      className: "absolute inset-0 opacity-40 mix-blend-soft-light",
-      style: { backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }
+// --- EXACT ASSETS FROM DESIGNCODE ---
+const ASSETS = {
+  logo: "https://designcode.io/images/logos/logo.svg",
+  heroBg: "https://designcode.io/images/mockups/mockup3-bg.svg",
+  heroCard1: "https://designcode.io/images/mockups/mockup-card2.svg",
+  heroContent: "https://designcode.io/images/mockups/mockup-content.svg",
+  proIcon: "https://designcode.io/images/icons/pricing-large.svg",
+  course1: "https://images.ctfassets.net/ooa29xqb8tix/7bIHb2z3qClO9GfyPwj6nP/4cb3a08cdc0d34645540b1295f96dc67/Logo_React.png",
+  course2: "https://images.ctfassets.net/ooa29xqb8tix/4bWEQMRsA6PzjiHljsxryp/55d78d84da072e9c22caddbccd67396b/swift-logo.png",
+  course3: "https://images.ctfassets.net/ooa29xqb8tix/6wKL78pR08vwXE1lqdnmqQ/3fae44b2af1858454fa6c34fafe68cf1/framer-logo.png",
+  course4: "https://images.ctfassets.net/ooa29xqb8tix/1bYdUtniEAUH3jdqQd3Qc1/7cf21d20882bfe59f01d7bc74e81010d/react-logo.png"
+};
+
+// Massive Visual Background with moving blobs and waves
+const MasterBackground = () => {
+  return React.createElement("div", { className: "fixed inset-0 -z-10 bg-[#1F1F47] overflow-hidden" },
+    React.createElement("img", { 
+      src: ASSETS.heroBg, 
+      className: "absolute top-0 left-0 w-full h-full object-cover opacity-40 mix-blend-overlay",
+      alt: "" 
     }),
-    // Animated Floating Gradient Orbs
     React.createElement(motion.div, {
-      animate: { x: [0, 100, 0], y: [0, 50, 0], scale: [1, 1.2, 1] },
-      transition: { duration: 20, repeat: Infinity, ease: "easeInOut" },
-      className: "absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-[#FF4ECD] to-[#F9CB28] opacity-30 blur-[120px]"
+      animate: { scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, -20, 0] },
+      transition: { duration: 20, repeat: Infinity, ease: "linear" },
+      className: "absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full bg-gradient-to-br from-[#FF4ECD] to-[#F9CB28] opacity-30 blur-[120px]"
     }),
     React.createElement(motion.div, {
-      animate: { x: [0, -100, 0], y: [0, -50, 0], scale: [1, 1.1, 1] },
-      transition: { duration: 25, repeat: Infinity, ease: "easeInOut" },
-      className: "absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-br from-[#007CF0] to-[#00DFD8] opacity-30 blur-[120px]"
+      animate: { scale: [1, 1.15, 1], x: [0, -40, 0], y: [0, 30, 0] },
+      transition: { duration: 25, repeat: Infinity, ease: "linear" },
+      className: "absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] rounded-full bg-gradient-to-br from-[#007CF0] to-[#00DFD8] opacity-30 blur-[120px]"
     }),
-    React.createElement("div", { className: "absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(31,31,71,0.8)_100%)]" })
+    React.createElement("div", { className: "absolute inset-0 bg-gradient-to-b from-transparent via-[#1F1F47]/50 to-[#1F1F47]" })
   );
 };
 
-// -------------------------------------------------------------------
-// 2. Master Clone Section Components
-// -------------------------------------------------------------------
+const NavbarV3 = () => {
+  return React.createElement("nav", { className: "fixed top-0 inset-x-0 z-50 h-16 glass border-b border-white/10 backdrop-blur-xl flex items-center justify-between px-6 md:px-12" },
+    React.createElement("div", { className: "flex items-center gap-3 cursor-pointer" },
+      React.createElement("img", { src: ASSETS.logo, alt: "DesignCode Logo", className: "h-8 w-auto" }),
+      React.createElement("span", { className: "font-extrabold text-xl tracking-tighter text-white" }, "Design+Code")
+    ),
+    React.createElement("div", { className: "hidden md:flex items-center gap-8 text-sm font-semibold text-white/70" },
+      ["Courses", "Tutorials", "Pricing", "Downloads"].map((item) => 
+        React.createElement("a", { key: item, className: "hover:text-white transition-all" }, item)
+      )
+    ),
+    React.createElement("div", { className: "flex items-center gap-4" },
+      React.createElement("button", { className: "text-white/70 text-sm font-bold hover:text-white transition-colors" }, "Sign In"),
+      React.createElement("button", { className: "px-5 py-2 rounded-xl bg-white text-black font-bold text-sm hover:shadow-2xl hover:scale-105 transition-all" }, "Get Started")
+    )
+  );
+};
 
-export const HeroSectionV2 = ({ onGetStarted }) => {
-  return React.createElement("section", { className: "relative pt-32 pb-20 px-6 overflow-hidden flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto" },
-    /* Content Layer */
+const DetailedHero = () => {
+  return React.createElement("section", { className: "relative pt-32 pb-24 px-6 flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto" },
     React.createElement(motion.div, {
-      initial: { opacity: 0, y: 50 },
+      initial: { opacity: 0, y: 40 },
       animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.8 },
+      transition: { duration: 1, ease: "easeOut" },
       className: "flex-1 text-center lg:text-left z-10"
     },
-      React.createElement("h1", { className: "text-5xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight mb-6" },
-        "Design and ", React.createElement("br"),
-        React.createElement("span", { className: "text-transparent bg-clip-text bg-gradient-to-r from-[#00c6ff] to-[#0072ff]" }, "Code AI Apps")
+      React.createElement("h1", { className: "text-5xl md:text-7xl font-black text-white leading-[1.1] tracking-tight mb-6" }, 
+        "Design   and code  ", 
+        React.createElement("br"), 
+        React.createElement("span", { className: "text-transparent bg-clip-text bg-gradient-to-r from-[#00c6ff] to-[#0072ff]" }, "React apps")
       ),
-      React.createElement("p", { className: "text-lg md:text-xl text-slate-300/80 max-w-lg mx-auto lg:mx-0 leading-relaxed mb-10" },
-        "Don’t skip design. Build enterprise-grade systems utilizing highly scalable dynamic AI vectors and specialized neural processing."
+      React.createElement("p", { className: "text-lg md:text-xl text-white/70 max-w-lg leading-relaxed mb-10 mx-auto lg:mx-0" }, 
+        "Don’t skip design. Learn design and code, by building real apps with React and Swift. Complete courses about the best tools."
       ),
-      React.createElement("div", { className: "flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start" },
+      React.createElement("div", { className: "flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start" },
         React.createElement(motion.button, {
           whileHover: { scale: 1.05, y: -2 },
-          whileTap: { scale: 0.95 },
-          onClick: onGetStarted,
-          className: "group px-8 py-4 rounded-full bg-gradient-to-r from-[#E323FF] to-[#7517F8] text-white font-bold text-lg shadow-[0_20px_40px_rgba(117,23,248,0.3)] flex items-center gap-2 relative overflow-hidden"
+          whileTap: { scale: 0.98 },
+          className: "group flex items-center gap-3 px-8 py-4 rounded-3xl bg-white/10 border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl hover:bg-white/20 transition-all text-white font-bold text-lg"
         },
-          React.createElement("div", { className: "absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" }),
-          "Get Pro Access", React.createElement(ArrowRight, { className: "w-5 h-5 group-hover:translate-x-1 transition-transform" })
+          React.createElement("img", { src: ASSETS.proIcon, className: "w-8 h-8", alt: "" }),
+          "Get Pro Access"
         ),
-        React.createElement("div", { className: "text-slate-400 font-medium text-sm" }, 
-          React.createElement("div", { className: "text-white font-bold text-base" }, "$19 per month"),
-          "Includes 24+ AI Engines"
+        React.createElement("div", { className: "text-left" },
+          React.createElement("div", { className: "text-white font-extrabold text-lg" }, "$19 per month"),
+          React.createElement("div", { className: "text-white/50 text-sm max-w-[200px]" }, "Includes 50+ courses & videos")
         )
       )
     ),
-
-    /* 3D Stack Representation Layer */
-    React.createElement("div", { className: "flex-1 relative h-[500px] w-full max-w-lg perspective-[1000px]" },
-      // Floating Card 1 (Deep)
-      React.createElement(motion.div, {
-        animate: { rotateY: [0, 5, 0], rotateX: [0, 5, 0], y: [0, -10, 0] },
-        transition: { repeat: Infinity, duration: 5, ease: "easeInOut" },
-        className: "absolute top-20 left-10 w-[320px] aspect-[4/3] bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl p-6 origin-top-left z-0"
-      },
-        React.createElement("div", { className: "w-12 h-12 rounded-xl bg-[#007CF0]/20 flex items-center justify-center text-[#007CF0] mb-4" }, React.createElement(Code, { className: "w-6 h-6" })),
-        React.createElement("div", { className: "h-4 w-24 bg-white/20 rounded mb-2" }),
-        React.createElement("div", { className: "h-3 w-full bg-white/10 rounded mb-2" }),
-        React.createElement("div", { className: "h-3 w-4/5 bg-white/10 rounded" })
-      ),
-      // Floating Card 2 (Front Glass)
-      React.createElement(motion.div, {
-        initial: { scale: 0.8, opacity: 0 },
-        animate: { scale: 1, opacity: 1, rotateY: [0, -5, 0], y: [0, 10, 0] },
-        transition: { duration: 1, delay: 0.5, y: { repeat: Infinity, duration: 6, ease: "easeInOut" } },
-        className: "absolute top-32 right-10 w-[340px] aspect-[3/4] bg-gradient-to-b from-white/20 to-white/5 backdrop-blur-3xl rounded-3xl border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] p-8 z-20 overflow-hidden"
-      },
-        React.createElement("div", { className: "absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-[#00C6FF] via-[#0072FF] to-[#E323FF]" }),
-        React.createElement("div", { className: "w-16 h-16 rounded-2xl bg-[#E323FF] shadow-[0_0_30px_rgba(227,35,255,0.5)] flex items-center justify-center mb-8 text-white" }, React.createElement(Sparkles, { className: "w-8 h-8" })),
-        React.createElement("h3", { className: "text-2xl font-bold text-white mb-4" }, "Neural Render"),
-        React.createElement("p", { className: "text-sm text-slate-300 leading-relaxed mb-8" }, "Deploy high-density computational architectures optimized for next-gen fluid interactions."),
-        React.createElement("div", { className: "flex items-center gap-2 mt-auto" },
-          React.createElement("div", { className: "w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 border-2 border-white/20" }),
-          React.createElement("div", { className: "text-xs text-white font-medium" }, "Authored by System Core")
-        )
-      ),
-      // Glowing Floating Ring (Simulation)
-      React.createElement(motion.div, {
-        animate: { rotate: 360 },
-        transition: { repeat: Infinity, duration: 40, ease: "linear" },
-        className: "absolute top-[15%] left-[15%] w-[400px] h-[400px] border-2 border-dashed border-white/10 rounded-full z-10"
+    React.createElement("div", { className: "flex-1 relative w-full max-w-lg h-[450px] md:h-[550px]" },
+      // The layering effect using exact svgs
+      React.createElement(motion.img, {
+        src: ASSETS.heroCard1,
+        initial: { opacity: 0, y: 40, scale: 0.9, rotateY: 10 },
+        animate: { opacity: 1, y: 0, scale: 1, rotateY: 0 },
+        transition: { duration: 1.5, ease: "easeOut" },
+        className: "absolute top-0 right-0 w-full h-auto object-contain z-10 drop-shadow-[0_50px_100px_rgba(0,0,0,0.5)]",
+        style: { transformPerspective: 1000 }
+      }),
+      React.createElement(motion.img, {
+        src: ASSETS.heroContent,
+        initial: { opacity: 0, x: -40, rotateZ: -5 },
+        animate: { opacity: 1, x: 0, rotateZ: 0 },
+        transition: { duration: 1.2, delay: 0.5 },
+        className: "absolute top-20 left-[-10%] w-[70%] h-auto object-contain z-20 drop-shadow-2xl"
       })
     )
   );
 };
 
-// -------------------------------------------------------------------
-// 3. Staggered Dynamic Feature Grid (Dynamic Replica)
-// -------------------------------------------------------------------
-const FEATURES = [
-  { title: "Core Infrastructure", items: "12 Projects", color: "from-[#FF4ECD] to-[#FF72E1]", icon: Database },
-  { title: "React Integration", items: "24 Components", color: "from-[#007CF0] to-[#00DFD8]", icon: Code },
-  { title: "Visual Aesthetics", items: "30+ UI Kits", color: "from-[#7928CA] to-[#FF0080]", icon: Layers },
-  { title: "Secure Sandbox", items: "Edge Compute", color: "from-[#FF4B2B] to-[#FF416C]", icon: Shield }
-];
-
-export const CourseGrid = () => {
-  return React.createElement("section", { className: "py-20 px-6 max-w-7xl mx-auto" },
-    React.createElement("div", { className: "text-center lg:text-left mb-16" },
-      React.createElement("h2", { className: "text-4xl font-bold text-white mb-4 tracking-tight" }, "Comprehensive Track Vector"),
-      React.createElement("p", { className: "text-slate-400 max-w-xl" }, "Follow curated structured pathways to master the art of autonomous ecosystem integration.")
-    ),
-    React.createElement("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" },
-      FEATURES.map((f, i) => 
-        React.createElement(motion.div, {
-          key: i,
-          initial: { opacity: 0, y: 30 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true },
-          transition: { delay: i * 0.1 },
-          whileHover: { y: -8, scale: 1.02 },
-          className: "group relative rounded-[32px] p-1 overflow-hidden"
-        },
-          React.createElement("div", { className: `absolute inset-0 bg-gradient-to-br ${f.color} opacity-40 blur-xl group-hover:opacity-70 transition-opacity` }),
-          React.createElement("div", { className: "relative bg-[#24244D]/90 backdrop-blur-xl rounded-[30px] p-8 h-full border border-white/10 flex flex-col" },
-             React.createElement("div", { className: `w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white mb-8 shadow-lg shadow-black/20` }, 
-                React.createElement(f.icon, { className: "w-7 h-7" })
-             ),
-             React.createElement("h3", { className: "text-xl font-bold text-white mb-2" }, f.title),
-             React.createElement("p", { className: "text-sm text-slate-400" }, f.items),
-             React.createElement("div", { className: "mt-auto pt-8" },
-                React.createElement("button", { className: "flex items-center gap-2 text-xs font-bold text-white/50 group-hover:text-white transition-colors" },
-                   "OPEN NODE", React.createElement(ArrowRight, { className: "w-3 h-3 group-hover:translate-x-1 transition-transform" })
-                )
-             )
-          )
-        )
-      )
-    )
-  );
-};
-
-// -------------------------------------------------------------------
-// 4. Tech Vector Sliding Loop (Infinite Marquee)
-// -------------------------------------------------------------------
-export const MarqueeStrip = () => {
-  return React.createElement("div", { className: "w-full py-10 bg-white/5 backdrop-blur-md border-y border-white/5 overflow-hidden relative" },
+const ScrollingFeatures = () => {
+  const tech = [
+    { name: "REACT", icon: Code }, { name: "SWIFTUI", icon: Cpu },
+    { name: "FIGMA", icon: Layers }, { name: "SPLINE", icon: Globe },
+    { name: "FRAMER", icon: Zap }, { name: "NODE.JS", icon: Terminal }
+  ];
+  
+  return React.createElement("div", { className: "w-full py-12 border-y border-white/10 overflow-hidden relative bg-white/5 backdrop-blur-md" },
     React.createElement(motion.div, {
-      animate: { x: ["0%", "-50%"] },
-      transition: { duration: 30, repeat: Infinity, ease: "linear" },
-      className: "flex items-center gap-16 whitespace-nowrap w-[200%]"
+      animate: { x: [0, -1035] },
+      transition: { repeat: Infinity, duration: 30, ease: "linear" },
+      className: "flex items-center gap-20 whitespace-nowrap w-max px-10"
     },
-      [...Array(2)].map((_, i) => React.createElement(React.Fragment, { key: i },
-        [
-          { name: "React", icon: Code },
-          { name: "Node.js", icon: Terminal },
-          { name: "Figma", icon: Layers },
-          { name: "Spline", icon: Globe },
-          { name: "SwiftUI", icon: Cpu },
-          { name: "Vercel", icon: Zap }
-        ].map((tech, idx) => 
-          React.createElement("div", { key: idx, className: "flex items-center gap-3 text-white/40 font-bold tracking-wider text-xl select-none" },
-             React.createElement(tech.icon, { className: "w-6 h-6 opacity-50" }),
-             tech.name.toUpperCase()
-          )
+      [...tech, ...tech, ...tech].map((t, idx) => 
+        React.createElement("div", { key: idx, className: "flex items-center gap-3 opacity-40 hover:opacity-100 transition-all font-bold tracking-widest text-white select-none" },
+          React.createElement(t.icon, { className: "w-6 h-6" }),
+          React.createElement("span", null, t.name)
         )
-      ))
+      )
     )
   );
 };
 
-// -------------------------------------------------------------------
-// 5. Consolidated "DesignCode-Style" View Assembly
-// -------------------------------------------------------------------
-export const DesignCodeMasterView = ({ onAction }) => {
-  return React.createElement(React.Fragment, null,
-    React.createElement(DesignCodeBg),
-    React.createElement("div", { className: "relative min-h-screen overflow-hidden" },
-      React.createElement(HeroSectionV2, { onGetStarted: onAction }),
-      React.createElement(MarqueeStrip),
-      React.createElement(CourseGrid),
-      // Static Footer Hook
-      React.createElement("section", { className: "py-20 text-center" },
-        React.createElement("div", { className: "glass max-w-3xl mx-auto rounded-[40px] p-12 border-white/10 bg-gradient-to-b from-white/10 to-transparent relative overflow-hidden" },
-           React.createElement("h3", { className: "text-3xl font-bold text-white mb-4" }, "Join 100k+ developers"),
-           React.createElement("p", { className: "text-slate-400 mb-8" }, "Gain immediate entry to high-density curriculum channels and asset repos."),
-           React.createElement("button", { onClick: onAction, className: "px-10 py-4 rounded-full bg-white text-[#1F1F47] font-extrabold shadow-2xl hover:bg-slate-100 transition-all" }, "Initialize Instance")
+const CourseCard = ({ title, desc, hours, image, color }) => {
+  return React.createElement(motion.div, {
+    whileHover: { scale: 1.03, y: -5 },
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    className: "group relative p-[1px] rounded-[40px] overflow-hidden bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
+  },
+    React.createElement("div", { className: "absolute inset-0 bg-gradient-to-br opacity-40 group-hover:opacity-60 blur-xl transition-opacity", style: { backgroundImage: `linear-gradient(135deg, ${color})` } }),
+    React.createElement("div", { className: "relative bg-[#24244D]/95 backdrop-blur-2xl rounded-[39px] p-8 h-full flex flex-col border border-white/10 shadow-2xl" },
+      React.createElement("div", { className: "w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-8 shadow-lg", style: { backgroundImage: `linear-gradient(135deg, ${color})` } },
+        React.createElement("img", { src: image, className: "w-10 h-10 object-contain", alt: "" })
+      ),
+      React.createElement("h3", { className: "text-xl md:text-2xl font-extrabold text-white mb-3 leading-tight" }, title),
+      React.createElement("p", { className: "text-white/60 text-sm leading-relaxed mb-6 line-clamp-3" }, desc),
+      React.createElement("div", { className: "mt-auto pt-6 border-t border-white/5 flex justify-between items-center" },
+        React.createElement("span", { className: "text-xs font-bold text-white/40 tracking-wider" }, hours.toUpperCase()),
+        React.createElement(ArrowRight, { className: "w-5 h-5 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all" })
+      )
+    )
+  );
+};
+
+const CoursesGrid = () => {
+  const items = [
+    { title: "Master AI Prompting", desc: "Learn to leverage AI tools like Aura for creating beautiful designs and advanced prompts.", hours: "10 hours", image: ASSETS.course1, color: "#FF4ECD, #FF72E1" },
+    { title: "Build SwiftUI Apps", desc: "Explore exciting new features of SwiftUI 6 and Xcode 16 for building premium iOS 18 apps.", hours: "5 hours", image: ASSETS.course2, color: "#007CF0, #00DFD8" },
+    { title: "No-Code with Framer", desc: "Create modern user interfaces using dark mode and glass designs and auto layout.", hours: "4 hours", image: ASSETS.course3, color: "#7928CA, #FF0080" },
+    { title: "Full React Site", desc: "Build web apps from the ground up using React for frontend and Firebase for scale.", hours: "6 hours", image: ASSETS.course4, color: "#FF4B2B, #FF416C" }
+  ];
+
+  return React.createElement("section", { className: "py-24 px-6 max-w-7xl mx-auto" },
+    React.createElement("div", { className: "text-center mb-16" },
+      React.createElement("span", { className: "text-white/50 font-bold tracking-[0.2em] text-sm mb-4 block" }, "300 HOURS OF COURSES"),
+      React.createElement("h2", { className: "text-4xl md:text-5xl font-black text-white mb-6 tracking-tight" }, "Learn the best tools and platforms"),
+      React.createElement("p", { className: "text-white/60 text-lg max-w-2xl mx-auto" }, "We focus on industry leading platforms so that you can be prepared for your next job. Then we teach all we can about them.")
+    ),
+    React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" },
+      items.map((item, idx) => React.createElement(CourseCard, { key: idx, ...item }))
+    )
+  );
+};
+
+const PricingV3 = () => {
+  const tiers = [
+    { name: "Basic", price: "Free", features: ["Free courses", "5 Premium Videos", "Notify me, Favorite"] },
+    { name: "Pro", price: "$19", features: ["All courses and videos", "Source files, ePub", "Certificates, Tests", "Commercial use"], active: true },
+    { name: "Team", price: "$25", features: ["5 users included", "Manage subscriptions", "Team progress reporting"] }
+  ];
+
+  return React.createElement("section", { className: "py-24 px-6" },
+    React.createElement("div", { className: "text-center mb-16" },
+      React.createElement("h2", { className: "text-4xl md:text-5xl font-black text-white tracking-tight" }, "Ready to start?")
+    ),
+    React.createElement("div", { className: "grid md:grid-cols-3 gap-8 max-w-5xl mx-auto" },
+      tiers.map((tier, i) => 
+        React.createElement("div", { 
+          key: i, 
+          className: `glass p-10 rounded-[40px] border transition-all ${tier.active ? 'border-white/30 scale-105 bg-gradient-to-b from-white/10 to-transparent shadow-2xl z-10' : 'border-white/10 opacity-80 hover:opacity-100 hover:scale-105'}`
+        },
+          React.createElement("span", { className: "text-white/50 text-sm font-bold tracking-widest uppercase" }, tier.name),
+          React.createElement("div", { className: "mt-4 flex items-baseline text-white" },
+            React.createElement("span", { className: "text-5xl font-black" }, tier.price),
+            tier.price !== 'Free' && React.createElement("span", { className: "text-white/60 text-sm ml-2" }, "per month")
+          ),
+          React.createElement("ul", { className: "mt-8 space-y-4 mb-10" },
+            tier.features.map((feat, idx) => 
+              React.createElement("li", { key: idx, className: "flex items-center gap-3 text-white/70 text-sm" },
+                React.createElement(Check, { className: "w-4 h-4 text-green-400" }),
+                feat
+              )
+            )
+          ),
+          React.createElement("button", { className: `w-full py-4 rounded-2xl font-bold text-sm transition-all ${tier.active ? 'bg-white text-black shadow-lg hover:bg-white/90' : 'border border-white/20 text-white hover:bg-white/5'}` }, 
+            tier.active ? "Subscribe" : "Sign Up"
+          )
         )
       )
     )
+  );
+};
+
+const FooterV3 = () => {
+  return React.createElement("footer", { className: "py-16 border-t border-white/10 glass mt-auto text-center" },
+    React.createElement("img", { src: ASSETS.logo, className: "h-10 mx-auto opacity-50 mb-6", alt: "" }),
+    React.createElement("p", { className: "text-white/40 text-xs mb-2" }, "Site made with React, Next.js and Spline."),
+    React.createElement("p", { className: "text-white/60 text-sm font-medium" }, "Design+Code © 2025")
+  );
+};
+
+export const DesignCodeMasterView = ({ onAction }) => {
+  return React.createElement("main", { className: "relative min-h-screen w-full text-white overflow-x-hidden flex flex-col font-sans selection:bg-[#00C6FF] selection:text-black" },
+    React.createElement(MasterBackground),
+    React.createElement(NavbarV3),
+    React.createElement(DetailedHero),
+    React.createElement(ScrollingFeatures),
+    React.createElement(CoursesGrid),
+    React.createElement(PricingV3),
+    React.createElement(FooterV3)
   );
 };
