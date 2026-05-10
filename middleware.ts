@@ -1,6 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken } from '@/lib/auth';
 
+export function middleware(request: NextRequest) {
+  // This is the main middleware function that Next.js expects
+  const path = request.nextUrl.pathname;
+  
+  // Add any global middleware logic here if needed
+  // For now, we'll just let requests pass through
+  // Authentication is handled at the API route level
+  
+  return NextResponse.next();
+}
+
+// Configure which paths the middleware runs on
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
+
 export async function authMiddleware(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   
