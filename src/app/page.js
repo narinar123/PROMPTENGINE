@@ -45,11 +45,15 @@ export default function App() {
 
       React.createElement("nav", { className: "fixed top-0 inset-x-0 z-50 h-16 glass border-b border-white/5 flex items-center justify-between px-6 md:px-12" },
         React.createElement("div", { 
-          className: "flex items-center gap-2 font-heading font-bold text-xl tracking-tight text-white cursor-pointer",
+          className: "flex items-center gap-3 font-heading font-bold text-xl tracking-tight text-white cursor-pointer",
           onClick: () => { setCurrentRoute("home"); setActiveToolId(null); }
         },
-          React.createElement("div", { className: "w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white" }, "G"),
-          "PROMPT HERO"
+          React.createElement("img", { 
+            src: "https://www.gsgroups.net/gslogo.png", 
+            alt: "Logo", 
+            className: "h-8 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" 
+          }),
+          React.createElement("span", { className: "tracking-widest font-extrabold" }, "GUIDESOFT")
         ),
         React.createElement("div", { className: "hidden md:flex items-center gap-8 text-sm text-slate-400 font-medium" },
           [

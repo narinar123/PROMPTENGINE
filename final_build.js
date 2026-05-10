@@ -86,7 +86,8 @@ const html = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GS Prompt Hero - Zero Build Pipeline</title>
+    <title>GUIDESOFT | Advanced Dynamic AI Ecosystem</title>
+    <link rel="icon" href="https://www.gsgroups.net/gslogo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

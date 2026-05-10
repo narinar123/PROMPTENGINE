@@ -9,46 +9,73 @@ import { useAuth } from "/src/components/AuthManager.js";
 
 // Unified Tool Matrix Registry Derived From Legacy Stack
 const AI_TOOLS_REGISTRY = [
-  { id: "ai-humanizer", name: "AI Humanizer", desc: "Convert sterile AI text into warm, undetectable human copy.", icon: User },
-  { id: "blog-writer", name: "Blog Writer", desc: "Generate full-stack SEO articles in optimized markdown.", icon: BookOpen },
-  { id: "paraphraser", name: "Paraphraser", desc: "Rephrase sentences retaining absolute contextual fidelity.", icon: Repeat },
-  { id: "summarizer", name: "Summarizer", desc: "Distill long-form documents into rapid execution highlights.", icon: FileText },
-  { id: "grammar-checker", name: "Grammar Checker", desc: "Correct and polish textual velocity syntax error-free.", icon: CheckCircle },
-  { id: "essay-writer", name: "Essay Writer", desc: "Construct high-density academic-tier compositions.", icon: Edit },
-  { id: "email-writer", name: "Email Writer", desc: "Draft persuasive transactional & cold-outreach threads.", icon: Mail },
-  { id: "caption-writer", name: "Caption Writer", desc: "Craft hyper-engaging high-conversion social triggers.", icon: MessageSquare },
-  { id: "cover-letter", name: "Cover Letter", desc: "Formulate bespoke pitch overlays tailored for recruiters.", icon: Briefcase },
-  { id: "meta-description", name: "Meta Description", desc: "Optimize SERP CTR using dense thematic anchors.", icon: Globe },
-  { id: "job-description", name: "Job Description", desc: "Structure comprehensive technical requisition forms.", icon: Briefcase },
-  { id: "story-generator", name: "Story Generator", desc: "Weave complex narrative universes automatically.", icon: Sparkles },
-  { id: "content-detector", name: "AI Detector", desc: "Scan text across probability vectors to verify origin.", icon: Shield },
-  { id: "plagiarism-checker", name: "Plagiarism Check", desc: "Scan cross-indexed databases for footprint similarity.", icon: CheckSquare },
-  { id: "translation", name: "Translation", desc: "Seamless vector shifts across 100+ dynamic tongues.", icon: Globe },
-  { id: "product-description", name: "Product Desc", desc: "Generate high-conversion e-comm sales narratives.", icon: Copy },
-  { id: "rewriter", name: "Content Rewriter", desc: "Spin legacy copy into dynamic fresh iterations.", icon: Repeat },
-  { id: "ad-copy", name: "Ad Copy", desc: "Create high-retention ad scripts instantly.", icon: Sparkles },
-  { id: "bio-generator", name: "Bio Generator", desc: "Structure compelling personal presence summaries.", icon: User },
-  { id: "cold-email", name: "Cold Email", desc: "Unlock inbound funnels with high-open direct hooks.", icon: Mail },
-  { id: "headline-generator", name: "Headline Gen", desc: "Hook users with algorithmic attention magnets.", icon: Type },
-  { id: "linkedin-bio", name: "LinkedIn Bio", desc: "Position your stack strategically for visibility.", icon: Briefcase },
-  { id: "poem-generator", name: "Poem Generator", desc: "Compute complex rhythm and metaphorical vectors.", icon: Sparkles },
-  { id: "speech-writer", name: "Speech Writer", desc: "Draft rhetorical addresses optimized for cadence.", icon: MessageSquare }
+  { id: "paraphraser", name: "Paraphraser", desc: "Rewrite sentences for fresh, original phrasing.", icon: Repeat, cat: "Writing" },
+  { id: "grammar-checker", name: "Grammar Checker", desc: "Identify and fix syntax issues instantly.", icon: CheckCircle, cat: "Editing" },
+  { id: "ai-humanizer", name: "AI Humanizer", desc: "Transform robotic text into natural content.", icon: User, cat: "Writing" },
+  { id: "summarizer", name: "Summarizer", desc: "Distill articles and posts in seconds.", icon: FileText, cat: "Writing" },
+  { id: "content-detector", name: "AI Detector", desc: "Detect if text was written by AI or human.", icon: Shield, cat: "Editing" },
+  { id: "email-writer", name: "AI Email Writer", desc: "Craft professional emails tailored to tone.", icon: Mail, cat: "Marketing" },
+  { id: "essay-writer", name: "Essay Writer", desc: "Produce well-structured academic essays.", icon: Edit, cat: "Writing" },
+  { id: "blog-writer", name: "AI Blog Writer", desc: "Generate full blog posts automatically.", icon: BookOpen, cat: "Writing" },
+  { id: "cover-letter", name: "Cover Letter", desc: "Write tailored job application letters.", icon: Briefcase, cat: "Business" },
+  { id: "job-description", name: "Job Description", desc: "Generate complete role-specific docs.", icon: Briefcase, cat: "Business" },
+  { id: "linkedin-bio", name: "LinkedIn Bio", desc: "Craft a standout professional summary.", icon: Briefcase, cat: "Business" },
+  { id: "bio-generator", name: "Bio Generator", desc: "Create professional short bios quickly.", icon: User, cat: "Business" },
+  { id: "story-generator", name: "Story Generator", desc: "Generate imaginative story plots.", icon: Sparkles, cat: "Creative" },
+  { id: "poem-generator", name: "Poem Generator", desc: "Create beautiful poems in any style.", icon: Sparkles, cat: "Creative" },
+  { id: "speech-writer", name: "Speech Writer", desc: "Write powerful speeches for any occasion.", icon: MessageSquare, cat: "Writing" },
+  { id: "meta-description", name: "Meta Description", desc: "Create SEO-friendly descriptions.", icon: Globe, cat: "SEO" },
+  { id: "headline-generator", name: "Headline Gen", desc: "Generate high-converting headlines.", icon: Type, cat: "SEO" },
+  { id: "plagiarism-checker", name: "Plagiarism Check", desc: "Scan content for originality scoring.", icon: CheckSquare, cat: "Editing" },
+  { id: "rewriter", name: "Sentence Rewriter", desc: "Rephrase any sentence dynamically.", icon: Repeat, cat: "Editing" },
+  { id: "caption-writer", name: "AI Caption Writer", desc: "Generate scroll-stopping captions.", icon: MessageSquare, cat: "Social" },
+  { id: "ad-copy", name: "Ad Copy Writer", desc: "Generate high-converting ad copies.", icon: Sparkles, cat: "Marketing" },
+  { id: "product-description", name: "Product Desc", desc: "Write persuasive sales narratives.", icon: Copy, cat: "Marketing" },
+  { id: "cold-email", name: "Cold Email Gen", desc: "Write personalized outreach emails.", icon: Mail, cat: "Social" },
+  { id: "translation", name: "AI Translator", desc: "Translate text across 50+ languages.", icon: Globe, cat: "Writing" }
 ];
 
+const CATEGORIES = ["All Tools", "Writing", "Editing", "Creative", "Marketing", "Business", "SEO", "Social"];
+
 export const ToolsDirectoryView = ({ onSelectTool }) => {
+  const [activeCat, setActiveCat] = useState("All Tools");
+
+  const filteredTools = activeCat === "All Tools" 
+    ? AI_TOOLS_REGISTRY 
+    : AI_TOOLS_REGISTRY.filter(t => t.cat === activeCat);
+
   return React.createElement(motion.div, {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     className: "pt-28 pb-20 px-6 max-w-7xl mx-auto"
   },
     React.createElement("div", { className: "text-center mb-16" },
-      React.createElement("h2", { className: "text-5xl font-extrabold text-white tracking-tight mb-4" }, "Universal Toolbox Core"),
-      React.createElement("p", { className: "text-slate-400 max-w-2xl mx-auto text-lg" }, "Unlock 24+ hyper-optimized neural processing engines mapped from dynamic datasets.")
+      React.createElement("div", { className: "inline-flex items-center gap-2 px-3 py-1.5 mb-6 border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl rounded-full text-xs font-bold text-emerald-400 uppercase tracking-widest" }, 
+        React.createElement(Sparkles, { className: "w-3 h-3" }), "All-in-One Assistant Platform"
+      ),
+      React.createElement("h2", { className: "text-5xl font-extrabold text-white tracking-tight mb-4" }, "Discover Our AI Tools"),
+      React.createElement("p", { className: "text-slate-400 max-w-2xl mx-auto text-lg" }, "Explore our comprehensive suite of specialized engines designed to enhance production velocity.")
     ),
-    React.createElement("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" },
-      AI_TOOLS_REGISTRY.map((tool, idx) => 
+
+    /* Category Filter Grid - EXACT REPLICATION OF CLONE BEHAVIOR but modern */
+    React.createElement("div", { className: "flex gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide justify-center" },
+      CATEGORIES.map(c => React.createElement("button", {
+        key: c,
+        onClick: () => setActiveCat(c),
+        className: `px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${activeCat === c ? 'bg-primary border-primary text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'}`
+      }, c))
+    ),
+
+    React.createElement(motion.div, { 
+      layout: true,
+      className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" 
+    },
+      filteredTools.map((tool, idx) => 
         React.createElement(motion.div, {
+          layout: true,
           key: tool.id,
+          initial: { opacity: 0, scale: 0.9 },
+          animate: { opacity: 1, scale: 1 },
           whileHover: { y: -5, scale: 1.02 },
           className: "glass p-6 rounded-2xl cursor-pointer hover:border-primary/40 group relative overflow-hidden transition-all duration-300",
           onClick: () => onSelectTool(tool.id)
