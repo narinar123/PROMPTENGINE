@@ -30,7 +30,7 @@ import {
   Terminal, Play, Loader2, CheckCircle2, AlertCircle,
   FileText, Edit, Repeat, CheckCircle, BookOpen, Mail, 
   MessageSquare, Briefcase, Copy, CheckSquare, Type,
-  Database, Code, Layers, Cpu, Star, Check} from "lucide-react";
+  Database, Code, Layers, Cpu, Star, Check, CreditCard, X, Smartphone, QrCode} from "lucide-react";
 
 // Core Engine Extension Registration
 if (typeof window !== 'undefined') {

@@ -1,7 +1,109 @@
-import React, { useLayoutEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useLayoutEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
-import { CheckCircle2, Zap, Shield, Globe, Terminal, Key, Sparkles, Cpu, FileText, BookOpen } from "lucide-react";
+import { CheckCircle2, Zap, Shield, Globe, Terminal, Key, Sparkles, Cpu, FileText, BookOpen, CreditCard, X, Smartphone, QrCode, Loader2 } from "lucide-react";
+
+const PaymentModal = ({ isOpen, onClose, plan }) => {
+  const [loading, setLoading] = useState(false);
+  const [payData, setPayData] = useState(null);
+
+  React.useEffect(() => {
+    if (isOpen && plan) {
+      setLoading(true);
+      // Fetch from dynamic backend
+      fetch('/api/pay', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ 
+             amount: plan.priceNum, 
+             plan: plan.name, 
+             userEmail: "user@gsprompthero.com", 
+             userName: "Demo Client" 
+         })
+      })
+      .then(r => r.json())
+      .then(data => {
+         setPayData(data);
+         setLoading(false);
+      })
+      .catch(e => {
+         console.error(e);
+         setLoading(false);
+      });
+    } else {
+      setPayData(null);
+    }
+  }, [isOpen, plan]);
+
+  return React.createElement(AnimatePresence, null, 
+    isOpen && React.createElement(motion.div, {
+      initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 },
+      className: "fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl px-4"
+    }, 
+      React.createElement(motion.div, {
+        initial: { scale: 0.9, y: 20, opacity: 0 },
+        animate: { scale: 1, y: 0, opacity: 1 },
+        exit: { scale: 0.9, y: 20, opacity: 0 },
+        className: "w-full max-w-md bg-[#0D111A] border border-white/10 rounded-[32px] overflow-hidden relative shadow-[0_32px_100px_rgba(0,0,0,0.7)]"
+      },
+         React.createElement("button", { onClick: onClose, className: "absolute top-6 right-6 text-slate-400 hover:text-white transition-colors bg-white/5 p-2 rounded-full" }, React.createElement(X, { className: "w-5 h-5" })),
+         
+         React.createElement("div", { className: "p-8" },
+            React.createElement("div", { className: "flex items-center gap-3 mb-6" },
+               React.createElement("div", { className: "p-3 bg-primary/10 rounded-2xl text-primary" }, React.createElement(CreditCard, { className: "w-6 h-6" })),
+               React.createElement("h3", { className: "text-xl font-black text-white" }, "Payment Gateway")
+            ),
+            
+            React.createElement("div", { className: "bg-white/5 rounded-2xl p-5 mb-8 border border-white/5 flex justify-between items-center" }, 
+              React.createElement("div", null, 
+                React.createElement("p", { className: "text-slate-400 text-xs font-bold uppercase tracking-wider" }, plan?.name || "Plan"),
+                React.createElement("p", { className: "text-white text-sm font-medium mt-1" }, "Standard Deployment License")
+              ),
+              React.createElement("p", { className: "text-3xl font-black text-white" }, plan?.price)
+            ),
+
+            loading ? (
+              React.createElement("div", { className: "flex flex-col items-center justify-center py-12" },
+                React.createElement(Loader2, { className: "w-8 h-8 text-primary animate-spin mb-4" }),
+                React.createElement("span", { className: "text-slate-400 font-medium" }, "Initializing Universal Payment Interface...")
+              )
+            ) : payData && (
+              React.createElement("div", { className: "space-y-6 text-center" },
+                 React.createElement("div", { className: "relative inline-block bg-white p-4 rounded-3xl shadow-2xl" },
+                   React.createElement("img", { 
+                      src: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(payData.upiLink)}`,
+                      alt: "Payment QR",
+                      className: "w-44 h-44 block"
+                   }),
+                   React.createElement("div", { className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#0D111A] p-1.5 rounded-lg shadow-lg" },
+                      React.createElement(Smartphone, { className: "w-6 h-6 text-emerald-400" })
+                   )
+                 ),
+                 
+                 React.createElement("p", { className: "text-slate-400 text-xs font-medium px-6" }, "Scan QR using ANY UPI app (GPay, PhonePe, Paytm) to complete transaction instantaneously."),
+
+                 React.createElement("div", { className: "grid grid-cols-1 gap-3 pt-4" },
+                   React.createElement("a", { 
+                     href: payData.upiLink,
+                     className: "w-full py-4 rounded-2xl bg-white text-black font-bold text-sm flex items-center justify-center gap-3 shadow-xl hover:scale-[1.02] transition-all"
+                   }, React.createElement(Smartphone, { className: "w-5 h-5" }), "Pay via Apps (Mobile)"),
+                   
+                   React.createElement("a", { 
+                     href: payData.gpayLink,
+                     className: "w-full py-4 rounded-2xl bg-[#1E2330] border border-white/10 text-white font-bold text-sm flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
+                   }, "⚡ Launch Direct GPay")
+                 ),
+                 
+                 React.createElement("div", { className: "flex items-center justify-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2" },
+                   React.createElement(Shield, { className: "w-3 h-3 text-emerald-500" }), "End-to-End Encrypted Infrastructure"
+                 )
+              )
+            )
+         )
+      )
+    )
+  );
+};
 
 export const SolutionsView = () => {
   const containerRef = useRef(null);
@@ -62,6 +164,7 @@ export const SolutionsView = () => {
 
 export const PricingView = () => {
   const containerRef = useRef(null);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   useLayoutEffect(() => {
      const ctx = gsap.context(() => {
@@ -73,10 +176,22 @@ export const PricingView = () => {
      return () => ctx.revert();
   }, []);
 
+  const plans = [
+    { name: "Operator Lite", price: "Free", priceNum: 0, desc: "For standard inference tests.", features: ["100 Operations / Day", "Standard Model Access", "Community Support"], accent: false },
+    { name: "Executive Nexus", price: "$49", priceNum: 49, desc: "High capacity acceleration.", features: ["Unlimited Parallel Flows", "Advanced Multi-Agent API", "Priority Core Compute", "Custom Prompts"], accent: true },
+    { name: "Monolith Core", price: "$199", priceNum: 199, desc: "For heavy institutional grids.", features: ["Dedicated GPU Farm", "SOC-2 Hardened Compliance", "Dedicated 24/7 Engineer Team"], accent: false }
+  ];
+
   return React.createElement("div", {
     ref: containerRef,
     className: "pt-32 pb-24 px-6 max-w-6xl mx-auto relative"
   },
+    React.createElement(PaymentModal, { 
+      isOpen: !!selectedPlan, 
+      onClose: () => setSelectedPlan(null), 
+      plan: selectedPlan 
+    }),
+
     React.createElement("div", { className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" }),
     
     React.createElement("div", { className: "text-center mb-20 relative z-10" },
@@ -84,11 +199,7 @@ export const PricingView = () => {
       React.createElement("p", { className: "text-slate-400 text-lg font-medium max-w-lg mx-auto" }, "Discover the configuration perfectly synthesized for your enterprise ecosystem velocity.")
     ),
     React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch relative z-10" },
-      [
-        { name: "Operator Lite", price: "Free", desc: "For standard inference tests.", features: ["100 Operations / Day", "Standard Model Access", "Community Support"], accent: false },
-        { name: "Executive Nexus", price: "$49", desc: "High capacity acceleration.", features: ["Unlimited Parallel Flows", "Advanced Multi-Agent API", "Priority Core Compute", "Custom Prompts"], accent: true },
-        { name: "Monolith Core", price: "Custom", desc: "For heavy institutional grids.", features: ["Dedicated GPU Farm", "SOC-2 Hardened Compliance", "Dedicated 24/7 Engineer Team"], accent: false }
-      ].map((tier, idx) => 
+      plans.map((tier, idx) => 
         React.createElement("div", { 
           key: idx, 
           className: `pricing-card rounded-[32px] p-10 flex flex-col transition-all duration-500 relative overflow-hidden ${tier.accent ? 'bg-[#0D111C] border-2 border-primary shadow-[0_20px_50px_rgba(99,102,241,0.2)] z-10 scale-105' : 'glass-card border border-white/5 shadow-xl opacity-90'}` 
@@ -111,6 +222,7 @@ export const PricingView = () => {
             ))
           ),
           React.createElement("button", { 
+            onClick: () => tier.priceNum > 0 ? setSelectedPlan(tier) : alert("Free tier selected."),
             className: `w-full py-5 rounded-2xl font-black text-sm tracking-[0.15em] uppercase transition-all duration-300 shadow-lg hover:-translate-y-1 ${tier.accent ? 'bg-gradient-to-r from-primary to-indigo-600 text-white hover:shadow-[0_10px_30px_rgba(99,102,241,0.4)]' : 'bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10'}`
           }, tier.accent ? "INITIALIZE ACCESS" : "SELECT TIER")
         )
@@ -118,6 +230,7 @@ export const PricingView = () => {
     )
   );
 };
+
 
 export const DocsView = () => {
   const containerRef = useRef(null);
