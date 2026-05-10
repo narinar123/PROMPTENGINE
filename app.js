@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import url from 'url';
 
-const PORT = 3005;
+const PORT = process.env.PORT || 3010;
 const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
@@ -155,8 +155,9 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, '0.0.0.0', () => {
+  const actualPort = server.address().port;
   console.log('\n🚀 GS PROMPT HERO 2.0 NEXT-VIBE SERVER ACTIVATED');
-  console.log(`🌍 Local URL: http://localhost:${PORT}`);
+  console.log(`🌍 Local URL: http://localhost:${actualPort}`);
   console.log(`📡 Connected to Gemini AI: ${GEMINI_KEY ? 'YES' : 'NO (KEY MISSING)'}\n`);
 });
