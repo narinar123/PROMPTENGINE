@@ -10,8 +10,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, Lock, Settings, Key, 
   Sparkles, ArrowRight, Shield, Zap, Globe, 
-  Terminal, Play, Loader2, CheckCircle2, AlertCircle 
-} from "lucide-react";
+  Terminal, Play, Loader2, CheckCircle2, AlertCircle,
+  FileText, Edit, Repeat, CheckCircle, BookOpen, Mail, 
+  MessageSquare, Briefcase, Copy, CheckSquare, Type} from "lucide-react";
 
 
 
@@ -284,40 +285,388 @@ const WorkflowPlayground = () => {
 };
 
 
+/* --- COMPONENT BUNDLE: DynamicViews.js --- */
+
+
+
+const SolutionsView = () => {
+  return React.createElement(motion.div, {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    className: "pt-32 pb-20 px-6 max-w-7xl mx-auto"
+  },
+    React.createElement("div", { className: "text-center mb-16" },
+      React.createElement("h2", { className: "text-5xl font-extrabold text-gradient mb-4" }, "Enterprise Ecosystem Solutions"),
+      React.createElement("p", { className: "text-slate-400 max-w-2xl mx-auto text-lg" }, "Scalable AI frameworks designed for next-gen corporate acceleration.")
+    ),
+    React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8" },
+      [
+        { title: "Generative Core", desc: "Deploy and orchestrate massive language models instantly across internal secure pipelines.", icon: Sparkles },
+        { title: "Nexus Security", desc: "Military-grade compliance ensuring dynamic context windows stay private and localized.", icon: Shield },
+        { title: "Flow Integration", desc: "Hook directly into distributed cloud nodes via direct-compute rest endpoints.", icon: Zap },
+        { title: "Edge Velocity", desc: "Distribute inference workflows globally at under 50ms worldwide replication latency.", icon: Globe }
+      ].map((solution, idx) => 
+        React.createElement("div", { key: idx, className: "glass p-10 rounded-3xl group hover:bg-white/5 transition-all duration-500 cursor-pointer" },
+          React.createElement("div", { className: "flex items-center gap-4 mb-6" },
+            React.createElement("div", { className: "p-3 bg-primary/20 rounded-xl text-primary group-hover:scale-110 transition-transform" }, 
+              React.createElement(solution.icon, { className: "w-6 h-6" })
+            ),
+            React.createElement("h3", { className: "text-2xl font-bold text-white" }, solution.title)
+          ),
+          React.createElement("p", { className: "text-slate-400 leading-relaxed" }, solution.desc),
+          React.createElement("div", { className: "mt-8 h-1 w-full bg-white/5 rounded-full overflow-hidden" },
+            React.createElement(motion.div, {
+              initial: { width: 0 },
+              animate: { width: '100%' },
+              transition: { duration: 2, delay: 0.5 + idx * 0.2 },
+              className: "h-full bg-primary"
+            })
+          )
+        )
+      )
+    )
+  );
+};
+
+const PricingView = () => {
+  return React.createElement(motion.div, {
+    initial: { opacity: 0, scale: 0.98 },
+    animate: { opacity: 1, scale: 1 },
+    className: "pt-32 pb-20 px-6 max-w-6xl mx-auto"
+  },
+    React.createElement("div", { className: "text-center mb-20" },
+      React.createElement("h2", { className: "text-5xl font-extrabold text-white mb-4" }, "Unlocking Dynamic Scaling"),
+      React.createElement("p", { className: "text-slate-400" }, "Select your enterprise velocity vector tier.")
+    ),
+    React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-8 items-center" },
+      [
+        { name: "Developer", price: "Free", features: ["100 Operations / Day", "Standard Model Access", "Community Support"], accent: false },
+        { name: "Pro Architect", price: "$49/mo", features: ["Unlimited Parallel Flows", "Advanced Multi-Agent API", "Priority Core Compute", "Custom Prompts"], accent: true },
+        { name: "Elite Core", price: "Custom", features: ["Dedicated GPU Farm", "SOC-2 Hardened Compliance", "Dedicated 24/7 Engineer Team"], accent: false }
+      ].map((tier, idx) => 
+        React.createElement("div", { 
+          key: idx, 
+          className: `rounded-3xl p-10 transition-all duration-500 relative ${tier.accent ? 'bg-gradient-to-b from-indigo-900/50 to-violet-900/50 border-2 border-primary scale-105 shadow-[0_0_50px_rgba(99,102,241,0.2)]' : 'glass border border-white/10 hover:border-white/20'}` 
+        },
+          tier.accent && React.createElement("div", { className: "absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full tracking-widest uppercase shadow-xl" }, "Most Optimized"),
+          React.createElement("h3", { className: "text-xl font-bold text-slate-200 mb-2" }, tier.name),
+          React.createElement("div", { className: "text-4xl font-extrabold text-white mb-8" }, tier.price),
+          React.createElement("div", { className: "space-y-4 mb-10" }, 
+            tier.features.map((f, i) => React.createElement("div", { key: i, className: "flex items-center gap-3 text-slate-300 text-sm" },
+              React.createElement(CheckCircle2, { className: "w-4 h-4 text-emerald-500" }), f
+            ))
+          ),
+          React.createElement("button", { 
+            className: `w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all ${tier.accent ? 'bg-white text-black hover:bg-slate-200' : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'}`
+          }, tier.accent ? "Initialize Nexus Account" : "Select Node Tier")
+        )
+      )
+    )
+  );
+};
+
+const DocsView = () => {
+  return React.createElement(motion.div, {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    className: "pt-24 flex flex-col md:flex-row min-h-screen max-w-7xl mx-auto"
+  },
+    React.createElement("aside", { className: "w-full md:w-64 border-r border-white/5 p-8 space-y-8 overflow-y-auto" },
+      React.createElement("div", null,
+        React.createElement("h4", { className: "text-xs font-bold text-slate-500 uppercase tracking-widest mb-4" }, "Documentation Core"),
+        React.createElement("div", { className: "space-y-2 text-sm font-medium" },
+          ["Quick Start", "Architecture Matrix", "Node Configuration", "CLI Binary"].map((l, i) => 
+            React.createElement("div", { key: i, className: `cursor-pointer ${i === 0 ? 'text-primary font-bold' : 'text-slate-400 hover:text-white'}` }, l)
+          )
+        )
+      ),
+      React.createElement("div", null,
+        React.createElement("h4", { className: "text-xs font-bold text-slate-500 uppercase tracking-widest mb-4" }, "API Protocol"),
+        React.createElement("div", { className: "space-y-2 text-sm font-medium text-slate-400" },
+          ["Authentication", "Dynamic Payloads", "Error Handling", "Rate Limits"].map((l, i) => 
+            React.createElement("div", { key: i, className: "hover:text-white cursor-pointer" }, l)
+          )
+        )
+      )
+    ),
+    React.createElement("main", { className: "flex-1 p-8 md:p-16" },
+      React.createElement("h1", { className: "text-4xl font-extrabold text-white mb-6" }, "Getting Started with Next-Vibe"),
+      React.createElement("p", { className: "text-slate-400 mb-8 text-lg leading-relaxed" }, "The GS Prompt Hero framework facilitates hyper-distributed orchestration logic without requiring local binary hooks. Initialize standard compute endpoints below."),
+      React.createElement("div", { className: "bg-black/80 rounded-2xl p-6 border border-white/10 font-mono text-sm shadow-2xl" },
+        React.createElement("div", { className: "flex items-center gap-2 mb-4" },
+          React.createElement("div", { className: "w-3 h-3 rounded-full bg-red-500" }),
+          React.createElement("div", { className: "w-3 h-3 rounded-full bg-yellow-500" }),
+          React.createElement("div", { className: "w-3 h-3 rounded-full bg-green-500" })
+        ),
+        React.createElement("div", { className: "text-emerald-400" }, "$ npx install -g gsprompthero"),
+        React.createElement("div", { className: "text-slate-500 mt-2" }, "> Resolving secure channel connections..."),
+        React.createElement("div", { className: "text-white mt-2" }, "✅ System Scanned: 100% Operational ready."),
+        React.createElement("div", { className: "text-emerald-400 mt-2" }, "$ hero deploy --matrix")
+      ),
+      React.createElement("div", { className: "mt-12 p-6 bg-indigo-900/20 border border-indigo-500/20 rounded-2xl flex gap-4 items-start" },
+        React.createElement(Terminal, { className: "w-6 h-6 text-indigo-400 flex-shrink-0 mt-1" }),
+        React.createElement("div", null,
+          React.createElement("h4", { className: "font-bold text-white mb-1" }, "Direct Injection Active"),
+          React.createElement("p", { className: "text-slate-400 text-sm" }, "Local telemetry tracks zero latent nodes during initialization. Monitor dashboard for instant relay diagnostics.")
+        )
+      )
+    )
+  );
+};
+
+
+/* --- COMPONENT BUNDLE: ToolMatrix.js --- */
+
+
+
+// Unified Tool Matrix Registry Derived From Legacy Stack
+const AI_TOOLS_REGISTRY = [
+  { id: "ai-humanizer", name: "AI Humanizer", desc: "Convert sterile AI text into warm, undetectable human copy.", icon: User },
+  { id: "blog-writer", name: "Blog Writer", desc: "Generate full-stack SEO articles in optimized markdown.", icon: BookOpen },
+  { id: "paraphraser", name: "Paraphraser", desc: "Rephrase sentences retaining absolute contextual fidelity.", icon: Repeat },
+  { id: "summarizer", name: "Summarizer", desc: "Distill long-form documents into rapid execution highlights.", icon: FileText },
+  { id: "grammar-checker", name: "Grammar Checker", desc: "Correct and polish textual velocity syntax error-free.", icon: CheckCircle },
+  { id: "essay-writer", name: "Essay Writer", desc: "Construct high-density academic-tier compositions.", icon: Edit },
+  { id: "email-writer", name: "Email Writer", desc: "Draft persuasive transactional & cold-outreach threads.", icon: Mail },
+  { id: "caption-writer", name: "Caption Writer", desc: "Craft hyper-engaging high-conversion social triggers.", icon: MessageSquare },
+  { id: "cover-letter", name: "Cover Letter", desc: "Formulate bespoke pitch overlays tailored for recruiters.", icon: Briefcase },
+  { id: "meta-description", name: "Meta Description", desc: "Optimize SERP CTR using dense thematic anchors.", icon: Globe },
+  { id: "job-description", name: "Job Description", desc: "Structure comprehensive technical requisition forms.", icon: Briefcase },
+  { id: "story-generator", name: "Story Generator", desc: "Weave complex narrative universes automatically.", icon: Sparkles },
+  { id: "content-detector", name: "AI Detector", desc: "Scan text across probability vectors to verify origin.", icon: Shield },
+  { id: "plagiarism-checker", name: "Plagiarism Check", desc: "Scan cross-indexed databases for footprint similarity.", icon: CheckSquare },
+  { id: "translation", name: "Translation", desc: "Seamless vector shifts across 100+ dynamic tongues.", icon: Globe },
+  { id: "product-description", name: "Product Desc", desc: "Generate high-conversion e-comm sales narratives.", icon: Copy },
+  { id: "rewriter", name: "Content Rewriter", desc: "Spin legacy copy into dynamic fresh iterations.", icon: Repeat },
+  { id: "ad-copy", name: "Ad Copy", desc: "Create high-retention ad scripts instantly.", icon: Sparkles },
+  { id: "bio-generator", name: "Bio Generator", desc: "Structure compelling personal presence summaries.", icon: User },
+  { id: "cold-email", name: "Cold Email", desc: "Unlock inbound funnels with high-open direct hooks.", icon: Mail },
+  { id: "headline-generator", name: "Headline Gen", desc: "Hook users with algorithmic attention magnets.", icon: Type },
+  { id: "linkedin-bio", name: "LinkedIn Bio", desc: "Position your stack strategically for visibility.", icon: Briefcase },
+  { id: "poem-generator", name: "Poem Generator", desc: "Compute complex rhythm and metaphorical vectors.", icon: Sparkles },
+  { id: "speech-writer", name: "Speech Writer", desc: "Draft rhetorical addresses optimized for cadence.", icon: MessageSquare }
+];
+
+const ToolsDirectoryView = ({ onSelectTool }) => {
+  return React.createElement(motion.div, {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    className: "pt-28 pb-20 px-6 max-w-7xl mx-auto"
+  },
+    React.createElement("div", { className: "text-center mb-16" },
+      React.createElement("h2", { className: "text-5xl font-extrabold text-white tracking-tight mb-4" }, "Universal Toolbox Core"),
+      React.createElement("p", { className: "text-slate-400 max-w-2xl mx-auto text-lg" }, "Unlock 24+ hyper-optimized neural processing engines mapped from dynamic datasets.")
+    ),
+    React.createElement("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" },
+      AI_TOOLS_REGISTRY.map((tool, idx) => 
+        React.createElement(motion.div, {
+          key: tool.id,
+          whileHover: { y: -5, scale: 1.02 },
+          className: "glass p-6 rounded-2xl cursor-pointer hover:border-primary/40 group relative overflow-hidden transition-all duration-300",
+          onClick: () => onSelectTool(tool.id)
+        },
+          React.createElement("div", { className: "absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity" },
+            React.createElement(tool.icon || Sparkles, { className: "w-16 h-16 text-primary" })
+          ),
+          React.createElement("div", { className: "w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white text-primary transition-colors" },
+            React.createElement(tool.icon || Sparkles, { className: "w-5 h-5" })
+          ),
+          React.createElement("h3", { className: "text-lg font-bold text-white mb-2" }, tool.name),
+          React.createElement("p", { className: "text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2" }, tool.desc),
+          React.createElement("div", { className: "flex items-center text-xs text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity" }, 
+            "Initialize Node ", React.createElement(ArrowRight, { className: "w-3 h-3 ml-1" })
+          )
+        )
+      )
+    )
+  );
+};
+
+const SingleToolWorkspace = ({ toolId, onBack }) => {
+  const tool = AI_TOOLS_REGISTRY.find(t => t.id === toolId) || AI_TOOLS_REGISTRY[0];
+  const { role } = useAuth();
+  
+  const [inputText, setInputText] = useState("");
+  const [outputText, setOutputText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const executeTool = async () => {
+    if (role === 'guest') {
+        setError("Unauthorized Instance. Escalated privileges required.");
+        return;
+    }
+    if (!inputText.trim()) return;
+
+    setLoading(true);
+    setError("");
+    setOutputText("");
+
+    try {
+        const res = await fetch("/api/ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                tool: tool.id, 
+                prompt: `Task: ${tool.name}. Input: ${inputText}. Response context: Professional, highly refined, ready for utilization.`
+            })
+        });
+        const data = await res.json();
+        if (data.success) setOutputText(data.result);
+        else setError(data.error || "Neural handshake failure.");
+    } catch(e) {
+        setError("API Endpoint Offline.");
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  return React.createElement(motion.div, {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    className: "pt-24 min-h-screen max-w-7xl mx-auto px-6 pb-20"
+  },
+    /* Breadcrumb & Header */
+    React.createElement("div", { className: "mb-8 flex flex-col items-start" },
+      React.createElement("button", { onClick: onBack, className: "text-slate-500 hover:text-white flex items-center gap-2 text-sm font-medium mb-4" },
+        React.createElement(ArrowRight, { className: "w-4 h-4 rotate-180" }), " Return to Vector Index"
+      ),
+      React.createElement("div", { className: "flex items-center gap-4" },
+        React.createElement("div", { className: "w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center text-primary" },
+            React.createElement(tool.icon || Sparkles, { className: "w-7 h-7" })
+        ),
+        React.createElement("div", null,
+            React.createElement("h1", { className: "text-3xl font-extrabold text-white" }, tool.name),
+            React.createElement("p", { className: "text-slate-400" }, tool.desc)
+        )
+      )
+    ),
+
+    /* Unified Interface Block */
+    React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-300px)] min-h-[500px]" },
+        /* Input Terminal */
+        React.createElement("div", { className: "glass rounded-3xl flex flex-col p-6" },
+            React.createElement("div", { className: "flex justify-between items-center mb-4" },
+                React.createElement("div", { className: "text-xs font-bold tracking-widest text-slate-500 uppercase" }, "Source Stream"),
+                React.createElement("div", { className: "text-[10px] font-mono text-slate-600" }, `${inputText.length} Characters`)
+            ),
+            React.createElement("textarea", {
+                value: inputText,
+                onChange: (e) => setInputText(e.target.value),
+                placeholder: `Provide source content to feed into the ${tool.name} matrix...`,
+                className: "flex-1 bg-black/20 rounded-2xl p-6 text-slate-300 font-medium resize-none focus:outline-none border border-white/5 focus:border-primary/30 transition-colors"
+            }),
+            React.createElement(motion.button, {
+                whileTap: { scale: 0.98 },
+                disabled: loading || !inputText.trim(),
+                onClick: executeTool,
+                className: "mt-4 py-4 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:brightness-110 transition-all"
+            },
+                loading ? React.createElement(Loader2, { className: "w-5 h-5 animate-spin" }) : React.createElement(Play, { className: "w-4 h-4 fill-current" }),
+                `Initialize ${tool.name.split(' ')[0]}`
+            ),
+            error && React.createElement("div", { className: "mt-4 text-xs text-red-400 bg-red-900/20 border border-red-900/50 p-3 rounded-xl text-center" }, error)
+        ),
+
+        /* Output Projection */
+        React.createElement("div", { className: "glass rounded-3xl flex flex-col p-6 bg-white/5 border-indigo-500/10" },
+            React.createElement("div", { className: "flex justify-between items-center mb-4" },
+                React.createElement("div", { className: "text-xs font-bold tracking-widest text-emerald-500 uppercase" }, "Rendered Logic"),
+                outputText && React.createElement("button", { 
+                    onClick: () => navigator.clipboard.writeText(outputText),
+                    className: "text-[10px] bg-white/10 px-2 py-1 rounded hover:bg-white/20 text-white transition-all" 
+                }, "Capture Clone")
+            ),
+            React.createElement("div", { className: "flex-1 bg-black/40 rounded-2xl p-6 font-medium overflow-y-auto text-slate-200 relative leading-relaxed" },
+                loading ? React.createElement("div", { className: "absolute inset-0 flex flex-col items-center justify-center text-primary/60 gap-3" },
+                    React.createElement(Loader2, { className: "w-8 h-8 animate-spin" }),
+                    React.createElement("span", { className: "text-sm font-bold tracking-widest animate-pulse" }, "EXECUTING INFERENCE...")
+                ) : outputText ? React.createElement("div", { className: "whitespace-pre-wrap selection:bg-emerald-500/30" }, outputText) : React.createElement("div", { className: "absolute inset-0 flex items-center justify-center text-slate-700 italic text-sm select-none" }, "Awaiting input vector to resolve matrix output...")
+            )
+        )
+    )
+  );
+};
+
+
 /* --- COMPONENT BUNDLE: page.js --- */
 
 
 
 
-function App() {
-  return React.createElement(AuthManager, null,
-    React.createElement("main", { className: "min-h-screen w-full bg-background text-foreground overflow-x-hidden" },
-      React.createElement(RoleSwitcher, null),
 
-      React.createElement("nav", { className: "fixed top-0 inset-x-0 z-40 h-16 glass border-b border-white/5 flex items-center justify-between px-6 md:px-12" },
-        React.createElement("div", { className: "flex items-center gap-2 font-heading font-bold text-xl tracking-tight text-white" },
+
+function App() {
+  const [currentRoute, setCurrentRoute] = useState("home");
+  const [activeToolId, setActiveToolId] = useState(null);
+
+  const navigateToTool = (toolId) => {
+    setActiveToolId(toolId);
+    setCurrentRoute("single-tool");
+  };
+
+  // Centralized Router Matrix
+  const renderContent = () => {
+    switch(currentRoute) {
+      case "solutions":
+        return React.createElement(SolutionsView);
+      case "pricing":
+        return React.createElement(PricingView);
+      case "docs":
+        return React.createElement(DocsView);
+      case "tools":
+        return React.createElement(ToolsDirectoryView, { onSelectTool: navigateToTool });
+      case "single-tool":
+        return React.createElement(SingleToolWorkspace, { toolId: activeToolId, onBack: () => setCurrentRoute("tools") });
+      case "workflows":
+        return React.createElement("div", { className: "pt-20 bg-[#0c0c0e] min-h-screen" }, React.createElement(WorkflowPlayground));
+      default:
+        return React.createElement(React.Fragment, null,
+          React.createElement(HeroSection),
+          React.createElement("section", { className: "relative border-t border-white/5 bg-[#0c0c0e]" },
+            React.createElement(WorkflowPlayground)
+          )
+        );
+    }
+  };
+
+  return React.createElement(AuthManager, null,
+    React.createElement("main", { className: "min-h-screen w-full bg-background text-foreground overflow-x-hidden flex flex-col" },
+      React.createElement(RoleSwitcher),
+
+      React.createElement("nav", { className: "fixed top-0 inset-x-0 z-50 h-16 glass border-b border-white/5 flex items-center justify-between px-6 md:px-12" },
+        React.createElement("div", { 
+          className: "flex items-center gap-2 font-heading font-bold text-xl tracking-tight text-white cursor-pointer",
+          onClick: () => { setCurrentRoute("home"); setActiveToolId(null); }
+        },
           React.createElement("div", { className: "w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white" }, "G"),
           "PROMPT HERO"
         ),
         React.createElement("div", { className: "hidden md:flex items-center gap-8 text-sm text-slate-400 font-medium" },
-          React.createElement("a", { href: "#", className: "hover:text-white transition-colors" }, "Solutions"),
-          React.createElement("a", { href: "#", className: "hover:text-white transition-colors" }, "Workflows"),
-          React.createElement("a", { href: "#", className: "hover:text-white transition-colors" }, "Docs"),
-          React.createElement("a", { href: "#", className: "hover:text-white transition-colors" }, "Pricing")
+          [
+            { id: "home", label: "Home" },
+            { id: "tools", label: "AI Tools" },
+            { id: "solutions", label: "Solutions" },
+            { id: "docs", label: "Docs" },
+            { id: "pricing", label: "Pricing" }
+          ].map(item => React.createElement("button", {
+            key: item.id,
+            onClick: () => { setCurrentRoute(item.id); setActiveToolId(null); },
+            className: `transition-all ${currentRoute === item.id ? 'text-white font-bold' : 'hover:text-white'}`
+          }, item.label))
         ),
         React.createElement("div", { className: "flex items-center gap-4" },
-          React.createElement("button", { className: "hidden sm:block text-sm text-white font-medium hover:text-primary transition-colors" }, "Sign In"),
-          React.createElement("button", { className: "px-4 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-slate-200 transition-all" }, "Access Beta")
+          React.createElement("button", { 
+             onClick: () => setCurrentRoute("tools"),
+             className: "px-4 py-2 bg-white text-black text-sm font-bold rounded-lg hover:bg-slate-200 transition-all" 
+          }, "Launch Node Matrix")
         )
       ),
 
-      React.createElement(HeroSection, null),
-      
-      React.createElement("section", { className: "relative border-t border-white/5 bg-[#0c0c0e]" },
-        React.createElement(WorkflowPlayground, null)
-      ),
+      /* Dynamic Routed Content Ingress */
+      React.createElement("div", { className: "flex-1" }, renderContent()),
 
-      React.createElement("footer", { className: "py-12 border-t border-white/5 glass text-center text-slate-500 text-xs" },
+      React.createElement("footer", { className: "py-12 border-t border-white/5 glass text-center text-slate-500 text-xs mt-auto" },
         React.createElement("div", null, "© 2026 GS Prompt Hero AI. All access reserved.")
       )
     )

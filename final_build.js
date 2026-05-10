@@ -7,6 +7,8 @@ const files = [
   'src/components/AuthManager.js',
   'src/components/HeroSection.js',
   'src/components/WorkflowPlayground.js',
+  'src/components/DynamicViews.js',
+  'src/components/ToolMatrix.js',
   'src/app/page.js'
 ];
 
@@ -22,8 +24,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, Lock, Settings, Key, 
   Sparkles, ArrowRight, Shield, Zap, Globe, 
-  Terminal, Play, Loader2, CheckCircle2, AlertCircle 
-} from "lucide-react";
+  Terminal, Play, Loader2, CheckCircle2, AlertCircle,
+  FileText, Edit, Repeat, CheckCircle, BookOpen, Mail, 
+  MessageSquare, Briefcase, Copy, CheckSquare, Type} from "lucide-react";
 
 `;
 
