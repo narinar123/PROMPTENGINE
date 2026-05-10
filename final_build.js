@@ -14,6 +14,17 @@ let bundleCode = `/**
  * GS Prompt Hero v2.0 - Optimized Production Bundle 
  * Auto-compiled via Terminal Zero-Build Pipeline 
  */
+
+// Unified Module Ecosystem Injection
+import React, { useState, createContext, useContext } from "react";
+import { createRoot } from 'react-dom/client';
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  User, Lock, Settings, Key, 
+  Sparkles, ArrowRight, Shield, Zap, Globe, 
+  Terminal, Play, Loader2, CheckCircle2, AlertCircle 
+} from "lucide-react";
+
 `;
 
 // Step 1: Collect source payload with hygienic import mapping
@@ -22,9 +33,10 @@ for (const file of files) {
     const fullPath = path.join(process.cwd(), file);
     let content = fs.readFileSync(fullPath, 'utf8');
     
-    // Strip standard internal source imports as they'll reside in the same scope.
-    // This allows the native module to run perfectly linearly.
-    content = content.replace(/^import .*? from ["'](\/src|\.).*?["'];?\s*$/gm, '');
+    // Aggressive import strip: Remove EVERY SINGLE import line
+    // Standard regex for single and multi-line imports
+    content = content.replace(/^import .*? from .*?;\s*$/gm, '');
+    content = content.replace(/^import \{[\s\S]*?\} from .*?;\s*$/gm, '');
     
     // Ensure cross-file export keywords are cleaned to simple declarations for inline execution safety.
     content = content.replace(/export const /g, 'const ');
@@ -38,8 +50,6 @@ for (const file of files) {
 bundleCode += `
 
 /* --- DYNAMIC APP BOOTSTRAP --- */
-import { createRoot } from 'react-dom/client';
-
 const bootApp = () => {
     const container = document.getElementById('root');
     if (!container) return console.error('FATAL: Root DOM not found.');

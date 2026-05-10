@@ -3,11 +3,21 @@
  * Auto-compiled via Terminal Zero-Build Pipeline 
  */
 
+// Unified Module Ecosystem Injection
+import React, { useState, createContext, useContext } from "react";
+import { createRoot } from 'react-dom/client';
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  User, Lock, Settings, Key, 
+  Sparkles, ArrowRight, Shield, Zap, Globe, 
+  Terminal, Play, Loader2, CheckCircle2, AlertCircle 
+} from "lucide-react";
+
+
 
 /* --- COMPONENT BUNDLE: AuthManager.js --- */
-import React, { useState, createContext, useContext } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { User, Lock, Settings, Key } from "lucide-react";
+
+
 
 const AuthContext = createContext({
   user: null,
@@ -82,9 +92,8 @@ const RoleSwitcher = () => {
 
 
 /* --- COMPONENT BUNDLE: HeroSection.js --- */
-import React from "react";
-import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Shield, Zap, Globe } from "lucide-react";
+
+
 
 const HeroSection = () => {
   return React.createElement("div", { className: "relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 py-20" },
@@ -174,9 +183,9 @@ const HeroSection = () => {
 
 
 /* --- COMPONENT BUNDLE: WorkflowPlayground.js --- */
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Terminal, Play, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+
+
+
 
 const WorkflowPlayground = () => {
   const { role } = useAuth();
@@ -276,7 +285,7 @@ const WorkflowPlayground = () => {
 
 
 /* --- COMPONENT BUNDLE: page.js --- */
-import React from "react";
+
 
 
 
@@ -317,8 +326,6 @@ function App() {
 
 
 /* --- DYNAMIC APP BOOTSTRAP --- */
-import { createRoot } from 'react-dom/client';
-
 const bootApp = () => {
     const container = document.getElementById('root');
     if (!container) return console.error('FATAL: Root DOM not found.');
